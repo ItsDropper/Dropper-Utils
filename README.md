@@ -19,6 +19,7 @@ Dropper Utils adds useful client-side features designed to improve gameplay, cus
 ### 🖥️ HUD
 - Totem Counter
 - Armor HUD
+- Saturation display
 - Custom HUD system
 
 ### ⚙️ Customization
