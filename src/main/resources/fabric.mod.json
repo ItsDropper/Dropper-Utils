@@ -21,11 +21,8 @@
 		],
 		"client": [
 			"name.dropperutils.client.DropperUtilsClient"
-		],
-
-		"modmenu": [
-			"name.dropperutils.client.modmenu.DropperUtilsModMenu"
 		]
+
 	},
 
 	"mixins": [

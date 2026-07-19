@@ -4,7 +4,11 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "GameRendererMixin",
-    "GuiMixin"
+    "GuiMixin",
+    "ParticleEngineMixin",
+    "ScreenEffectRendererMixin",
+    "BlockFeatureRendererMixin",
+    "BlockFeatureRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

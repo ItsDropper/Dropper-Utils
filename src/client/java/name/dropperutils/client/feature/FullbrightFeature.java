@@ -47,4 +47,31 @@ public class FullbrightFeature extends Feature {
             mc.player.removeEffect(MobEffects.NIGHT_VISION);
         }
     }
+
+    public void tick() {
+
+        if (!isEnabled()) {
+            return;
+        }
+
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.player == null) {
+            return;
+        }
+
+        if (!mc.player.hasEffect(MobEffects.NIGHT_VISION)) {
+
+            mc.player.addEffect(
+                    new MobEffectInstance(
+                            MobEffects.NIGHT_VISION,
+                            Integer.MAX_VALUE,
+                            0,
+                            false,
+                            false,
+                            false
+                    )
+            );
+        }
+    }
 }

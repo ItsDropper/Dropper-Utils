@@ -9,7 +9,11 @@ public class FeatureRegistry {
             ZoomFeature.INSTANCE,
             TotemCounterFeature.INSTANCE,
             ArmorHudFeature.INSTANCE,
-            SaturationFeature.INSTANCE
+            SaturationFeature.INSTANCE,
+            AnchorOptimizerFeature.INSTANCE,
+            DebugHudFeature.INSTANCE,
+            NoExplosionEffectsFeature.INSTANCE,
+            LowFireFeature.INSTANCE
     );
 
     public static void loadConfigs() {

@@ -29,6 +29,10 @@ public class DropperUtilsConfig {
 
     public boolean zoom = true;
     public boolean smoothZoom = true;
+    public boolean anchorOptimizer = true;
+    public boolean debugHud = false;
+    public boolean noExplosionEffects = false;
+    public boolean lowFire = false;
 
     public int zoomFov = 30;
     public float zoomSpeed = 0.15f;

@@ -18,7 +18,7 @@ public class SliderPanel {
         screen.addSlider(
                 new FeatureSlider(
                         x,
-                        180,
+                        225,
                         "Zoom FOV",
                         1,
                         50,
@@ -30,7 +30,7 @@ public class SliderPanel {
         screen.addSlider(
                 new FeatureSlider(
                         x,
-                        205,
+                        250,
                         "Zoom Speed",
                         0.01,
                         0.5,
