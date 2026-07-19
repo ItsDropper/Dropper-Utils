@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "dropperutils",
+	"version": "${version}",
+	"name": "DropperUtils",
+	"description": "This mod adds useful features for Minecraft.",
+	"authors": [
+		"ItsDropper"
+	],
+	"contact": {
+		"homepage": "https://github.com/ItsDropper/Dropper-Utils",
+		"sources": "https://github.com/ItsDropper/Dropper-Utils"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/dropperutils/icon.png",
+	"environment": "*",
+
+	"entrypoints": {
+		"main": [
+			"name.dropperutils.DropperUtils"
+		],
+		"client": [
+			"name.dropperutils.client.DropperUtilsClient"
+		],
+
+		"modmenu": [
+			"name.dropperutils.client.modmenu.DropperUtilsModMenu"
+		]
+	},
+
+	"mixins": [
+		"dropperutils.mixins.json"
+	],
+
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
