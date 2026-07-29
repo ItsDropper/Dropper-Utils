@@ -21,21 +21,33 @@ public class DropperUtilsConfig {
             .toFile();
 
 
-    public boolean armorHud = true;
-    public boolean totemCounter = true;
+    public boolean armorHud = false;
+    public boolean totemCounter = false;
     public boolean fullbright = true;
     public boolean saturation = true;
 
 
     public boolean zoom = true;
     public boolean smoothZoom = true;
-    public boolean anchorOptimizer = true;
+    public boolean anchorOptimizer = false;
     public boolean debugHud = false;
     public boolean noExplosionEffects = false;
     public boolean lowFire = false;
+    public boolean potionEffects = false;
+    public boolean hudEditor = false;
+    public boolean armorHudHorizontal = true;
 
     public int zoomFov = 30;
     public float zoomSpeed = 0.15f;
+    public float totemCounterScale = 1.0f;
+    public int debugHudX = 5;
+    public int debugHudY = 300;
+    public int armorHudX = 20;
+    public int armorHudY = 200;
+    public int totemHudX = 300;
+    public int totemHudY = 200;
+    public int potionHudX = 5;
+    public int potionHudY = 20;
 
 
     private static DropperUtilsConfig INSTANCE;

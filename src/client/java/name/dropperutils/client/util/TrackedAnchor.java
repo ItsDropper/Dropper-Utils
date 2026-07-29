@@ -44,8 +44,8 @@ public class TrackedAnchor {
         return distance;
     }
 
-    public void updateDistance(BlockPos playerPos) {
-        this.distance = playerPos.distSqr(pos);
+    public void updateDistance(double distance) {
+        this.distance = distance;
     }
 
     public boolean getLastState() {

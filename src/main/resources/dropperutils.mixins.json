@@ -7,8 +7,8 @@
     "GuiMixin",
     "ParticleEngineMixin",
     "ScreenEffectRendererMixin",
-    "BlockFeatureRendererMixin",
-    "BlockFeatureRendererAccessor"
+    "AnchorInteractionMixin",
+    "AnchorBlockUpdateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

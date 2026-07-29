@@ -1,0 +1,252 @@
+package name.dropperutils.client.hud;
+
+import name.dropperutils.client.feature.ArmorHudFeature;
+import name.dropperutils.client.feature.HudEditorFeature;
+import name.dropperutils.client.hudeditor.HudElement;
+import name.dropperutils.client.config.DropperUtilsConfig;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+
+public class ArmorHudElement extends HudElement {
+
+    private boolean horizontal;
+
+
+    public ArmorHudElement() {
+
+        super(
+                DropperUtilsConfig.get().armorHudX,
+                DropperUtilsConfig.get().armorHudY
+        );
+
+        horizontal =
+                DropperUtilsConfig.get().armorHudHorizontal;
+    }
+
+
+    @Override
+    public void render(GuiGraphics graphics) {
+
+        if (!ArmorHudFeature.INSTANCE.isEnabled()
+                && !HudEditorFeature.INSTANCE.isEnabled()) {
+            return;
+        }
+
+
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.player == null) {
+            return;
+        }
+
+
+        ItemStack[] armor = new ItemStack[]{
+                mc.player.getItemBySlot(EquipmentSlot.HEAD),
+                mc.player.getItemBySlot(EquipmentSlot.CHEST),
+                mc.player.getItemBySlot(EquipmentSlot.LEGS),
+                mc.player.getItemBySlot(EquipmentSlot.FEET)
+        };
+
+
+        if (horizontal) {
+            renderHorizontal(graphics, armor);
+        } else {
+            renderVertical(graphics, armor);
+        }
+
+
+        if (HudEditorFeature.INSTANCE.isEnabled()) {
+
+            graphics.fill(
+                    x - 2,
+                    y - 2,
+                    x + getWidth(),
+                    y + getHeight(),
+                    0x55FFFFFF
+            );
+        }
+    }
+
+
+    private void renderVertical(
+            GuiGraphics graphics,
+            ItemStack[] armor
+    ) {
+
+        Minecraft mc = Minecraft.getInstance();
+
+        int offset = 0;
+
+
+        for (ItemStack item : armor) {
+
+            drawArmor(
+                    graphics,
+                    mc,
+                    item,
+                    x,
+                    y + offset
+            );
+
+            offset += 22;
+        }
+    }
+
+
+    private void renderHorizontal(
+            GuiGraphics graphics,
+            ItemStack[] armor
+    ) {
+
+        Minecraft mc = Minecraft.getInstance();
+
+        int offset = 0;
+
+
+        for (ItemStack item : armor) {
+
+            drawArmor(
+                    graphics,
+                    mc,
+                    item,
+                    x + offset,
+                    y
+            );
+
+            offset += 22;
+        }
+    }
+
+
+    private void drawArmor(
+            GuiGraphics graphics,
+            Minecraft mc,
+            ItemStack item,
+            int drawX,
+            int drawY
+    ) {
+
+        if (item.isEmpty()) {
+            return;
+        }
+
+
+        int durability =
+                item.getMaxDamage() - item.getDamageValue();
+
+
+        float percent =
+                (float) durability / item.getMaxDamage();
+
+
+        int color;
+
+
+        if (percent > 0.5f) {
+            color = 0xFF00FF00;
+        }
+        else if (percent > 0.25f) {
+            color = 0xFFFFFF00;
+        }
+        else {
+            color = 0xFFFF0000;
+        }
+
+
+        graphics.renderItem(
+                item,
+                drawX,
+                drawY
+        );
+
+
+        if (horizontal) {
+
+            graphics.drawString(
+                    mc.font,
+                    durability + "",
+                    drawX + 1,
+                    drawY - 10,
+                    color,
+                    false
+            );
+
+        } else {
+
+            graphics.drawString(
+                    mc.font,
+                    durability + "",
+                    drawX + 25,
+                    drawY + 8,
+                    color,
+                    false
+            );
+        }
+
+
+        int barWidth = 16;
+
+        int filled =
+                (int) (barWidth * percent);
+
+
+        graphics.fill(
+                drawX,
+                drawY + 18,
+                drawX + barWidth,
+                drawY + 20,
+                0xFF555555
+        );
+
+
+        graphics.fill(
+                drawX,
+                drawY + 18,
+                drawX + filled,
+                drawY + 20,
+                color
+        );
+    }
+
+
+    @Override
+    public int getWidth() {
+
+        return horizontal ? 85 : 50;
+    }
+
+
+    @Override
+    public int getHeight() {
+
+        return horizontal ? 35 : 140;
+    }
+
+
+    @Override
+    public void savePosition() {
+
+        DropperUtilsConfig.get().armorHudX = x;
+        DropperUtilsConfig.get().armorHudY = y;
+
+        DropperUtilsConfig.save();
+    }
+
+
+    public void setHorizontal(boolean value) {
+
+        horizontal = value;
+
+        DropperUtilsConfig.get().armorHudHorizontal = value;
+        DropperUtilsConfig.save();
+    }
+
+
+    public boolean isHorizontal() {
+
+        return horizontal;
+    }
+}

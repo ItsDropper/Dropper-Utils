@@ -13,7 +13,9 @@ public class FeatureRegistry {
             AnchorOptimizerFeature.INSTANCE,
             DebugHudFeature.INSTANCE,
             NoExplosionEffectsFeature.INSTANCE,
-            LowFireFeature.INSTANCE
+            LowFireFeature.INSTANCE,
+            PotionEffectsFeature.INSTANCE,
+            HudEditorFeature.INSTANCE
     );
 
     public static void loadConfigs() {

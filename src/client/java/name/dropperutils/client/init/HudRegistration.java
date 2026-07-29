@@ -1,11 +1,9 @@
 package name.dropperutils.client.init;
 
+import name.dropperutils.client.hud.HudRenderer;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.resources.Identifier;
-import name.dropperutils.client.hud.ArmorHud;
-import name.dropperutils.client.hud.TotemCounterHud;
-import name.dropperutils.client.hud.DebugHud;
 
 public class HudRegistration {
 
@@ -13,20 +11,8 @@ public class HudRegistration {
 
         HudElementRegistry.attachElementAfter(
                 VanillaHudElements.HOTBAR,
-                Identifier.fromNamespaceAndPath("dropperutils", "totem_counter"),
-                (graphics, tickCounter) -> TotemCounterHud.render(graphics)
-        );
-
-        HudElementRegistry.attachElementAfter(
-                VanillaHudElements.HOTBAR,
-                Identifier.fromNamespaceAndPath("dropperutils", "armor_hud"),
-                (graphics, tickCounter) -> ArmorHud.render(graphics)
-        );
-
-        HudElementRegistry.attachElementAfter(
-                VanillaHudElements.HOTBAR,
-                Identifier.fromNamespaceAndPath("dropperutils", "debug_hud"),
-                (graphics, tickCounter) -> DebugHud.render(graphics)
+                Identifier.fromNamespaceAndPath("dropperutils", "hud_editor"),
+                (graphics, tickCounter) -> HudRenderer.render(graphics)
         );
 
     }

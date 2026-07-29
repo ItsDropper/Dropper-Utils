@@ -13,6 +13,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import net.minecraft.resources.Identifier;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffectUtil;
+
+import name.dropperutils.client.feature.PotionEffectsFeature;
 
 @Mixin(Gui.class)
 public class GuiMixin {
@@ -57,6 +62,52 @@ public class GuiMixin {
                     9,
                     9
             );
+        }
+    }
+
+    @Inject(
+            method = "render",
+            at = @At("TAIL")
+    )
+    private void renderPotionEffects(
+            GuiGraphics guiGraphics,
+            net.minecraft.client.DeltaTracker deltaTracker,
+            CallbackInfo ci
+    ) {
+
+        if (!PotionEffectsFeature.INSTANCE.isEnabled()) {
+            return;
+        }
+
+        Minecraft mc = Minecraft.getInstance();
+
+        if (mc.player == null) {
+            return;
+        }
+
+        int x = 5;
+        int y = 20;
+
+        for (MobEffectInstance effect : mc.player.getActiveEffects()) {
+
+            String name = effect.getEffect()
+                    .value()
+                    .getDisplayName()
+                    .getString();
+
+            String time = MobEffectUtil
+                    .formatDuration(effect, 1.0F, 20.0F)
+                    .getString();
+
+            guiGraphics.drawString(
+                    mc.font,
+                    name + " " + time,
+                    x,
+                    y,
+                    0xFFFFFF
+            );
+
+            y += 12;
         }
     }
 }

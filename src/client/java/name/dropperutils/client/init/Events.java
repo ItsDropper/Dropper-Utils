@@ -1,19 +1,16 @@
 package name.dropperutils.client.init;
 
+import name.dropperutils.client.feature.*;
+import name.dropperutils.client.util.AnchorPrediction;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 import name.dropperutils.client.config.DropperUtilsConfig;
-import name.dropperutils.client.feature.ArmorHudFeature;
-import name.dropperutils.client.feature.FullbrightFeature;
-import name.dropperutils.client.feature.TotemCounterFeature;
-import name.dropperutils.client.feature.ZoomFeature;
-import name.dropperutils.client.feature.DebugHudFeature;
 import name.dropperutils.client.gui.ClickGuiScreen;
-import name.dropperutils.client.feature.SaturationFeature;
 import name.dropperutils.client.util.AnchorOptimizer;
 import name.dropperutils.client.util.ExplosionEffects;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
+import name.dropperutils.client.hudeditor.HudEditorScreen;
 
 public class Events {
 
@@ -45,6 +42,10 @@ public class Events {
                 DropperUtilsConfig.get().debugHud
         );
 
+        PotionEffectsFeature.INSTANCE.setEnabled(
+                DropperUtilsConfig.get().potionEffects
+        );
+
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
@@ -56,6 +57,11 @@ public class Events {
 
             if (Keybinds.guiKey.consumeClick()) {
                 client.setScreen(new ClickGuiScreen());
+            }
+
+
+            if (Keybinds.hudEditorKey.consumeClick()) {
+                client.setScreen(new HudEditorScreen());
             }
 
             ZoomFeature.INSTANCE.tick(Keybinds.zoomKey);
@@ -77,6 +83,7 @@ public class Events {
             }
 
             AnchorOptimizer.tick();
+            AnchorPrediction.tick();
             ExplosionEffects.tick();
         });
     }
