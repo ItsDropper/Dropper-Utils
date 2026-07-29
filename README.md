@@ -1,75 +1,58 @@
-# ⚔️ Dropper Utils
+# DropperUtils
 
-A lightweight Minecraft PvP utility mod built for competitive players.
+A lightweight Minecraft Fabric PvP and QoL mod focused on improving gameplay without adding unnecessary features.
 
-Dropper Utils adds useful client-side features designed to improve gameplay, customization, and PvP experience without changing the vanilla feel of Minecraft.
+## Features
 
-## ✨ Features
+### HUD System
 
-### 🎯 PvP Tools
-- Smooth Zoom
-- Customizable zoom FOV
-- Adjustable zoom speed
+* Custom HUD Editor
+* Move HUD elements anywhere on your screen
+* Save HUD positions automatically
+* Adjustable HUD scaling
+* Custom HUD settings panels
 
-### 🌙 Visual
-- Fullbright
-- Cleaner gameplay visuals
-- Client-side improvements
+### Current HUDs
 
-### 🖥️ HUD
-- Totem Counter
-- Armor HUD
-- Saturation display
-- Custom HUD system
+* Totem Counter HUD
+* Armor HUD
+* Potion Effects HUD
+* Debug HUD
 
-### ⚙️ Customization
-- In-game Click GUI
-- Toggleable features
-- Adjustable settings
-- Config saving
+### PvP Features
 
-## 🖥️ Supported Versions
+* Anchor Optimizer
+* Low Screen Fire
+* No Explosion Effects
+* No Fire Overlay
 
-- Minecraft: `1.21.11`
-- Loader: `Fabric`
+### Visual Features
 
-## 📦 Installation
+* Fullbright
+* Zoom
+* Customizable quality of life improvements
+
+## Installation
 
 1. Install Fabric Loader
 2. Install Fabric API
-3. Download the latest Dropper Utils release
-4. Place the `.jar` file into your Minecraft `mods` folder
+3. Download DropperUtils
+4. Put the mod file into your `.minecraft/mods` folder
 
-## 🛠️ Development
+## Requirements
 
-Dropper Utils is built using:
+* Minecraft 1.21.11
+* Fabric Loader
+* Fabric API
 
-- Java
-- Fabric API
-- Minecraft Fabric Mod Loader
-- Gradle
+## Development
 
-## 📸 Screenshots
+Built with:
 
-Coming soon.
+* Java
+* Fabric API
+* Minecraft Client API
 
-## 📜 License
+## License
 
-Dropper Utils is licensed under the **Dropper Utils License**.
-
-You may use, modify, and create addons for Dropper Utils under the license terms.
-
-You must:
-- Credit **ItsDropper** as the original creator
-- Not claim ownership of Dropper Utils
-- Not distribute it as an official version without permission
-
-See the [LICENSE](LICENSE) file for full details.
-
-## 👤 Creator
-
-Created by **ItsDropper**
-
----
-
-⭐ If you enjoy Dropper Utils, consider supporting the project by sharing it with other PvP players.
+See the repository license for details.
