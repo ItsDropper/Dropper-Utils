@@ -110,9 +110,17 @@ public class AnchorPrediction {
             // 2 seconds timeout
             if (anchor.getTicksAlive() > 40) {
 
-                rollback(anchor.getPos());
-                iterator.remove();
+                Minecraft mc = Minecraft.getInstance();
 
+                if (mc.level != null) {
+                    mc.level.setBlock(
+                            anchor.getPos(),
+                            anchor.getOldState(),
+                            3
+                    );
+                }
+
+                iterator.remove();
             }
         }
     }

@@ -2,6 +2,7 @@
   "key.dropperutils.gamma": "Toggle Fullbright",
   "key.dropperutils.zoom": "Zoom",
   "key.dropperutils.gui": "Open Menu",
+  "key.dropperutils.hud_editor": "Open HUD Editor",
 
   "key.category.dropperutils.category": "DropperUtils"
 }
