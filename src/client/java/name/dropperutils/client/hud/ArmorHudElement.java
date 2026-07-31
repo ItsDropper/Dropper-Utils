@@ -61,10 +61,10 @@ public class ArmorHudElement extends HudElement {
         if (HudEditorFeature.INSTANCE.isEnabled()) {
 
             graphics.fill(
-                    x - 2,
-                    y - 2,
-                    x + getWidth(),
-                    y + getHeight(),
+                    getX() - 2,
+                    getY() - 2,
+                    getX() + getWidth(),
+                    getY() + getHeight(),
                     0x55FFFFFF
             );
         }
@@ -87,8 +87,8 @@ public class ArmorHudElement extends HudElement {
                     graphics,
                     mc,
                     item,
-                    x,
-                    y + offset
+                    getX(),
+                    getY() + offset
             );
 
             offset += 22;
@@ -112,8 +112,8 @@ public class ArmorHudElement extends HudElement {
                     graphics,
                     mc,
                     item,
-                    x + offset,
-                    y
+                    getX() + offset,
+                    getY()
             );
 
             offset += 22;
@@ -229,8 +229,8 @@ public class ArmorHudElement extends HudElement {
     @Override
     public void savePosition() {
 
-        DropperUtilsConfig.get().armorHudX = x;
-        DropperUtilsConfig.get().armorHudY = y;
+        DropperUtilsConfig.get().armorHudX = xPercent;
+        DropperUtilsConfig.get().armorHudY = yPercent;
 
         DropperUtilsConfig.save();
     }

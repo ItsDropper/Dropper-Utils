@@ -1,16 +1,20 @@
 # DropperUtils
 
-A lightweight Minecraft Fabric PvP and QoL mod focused on improving gameplay without adding unnecessary features.
+A lightweight Minecraft Fabric PvP and QoL mod focused on improving gameplay without unnecessary features or bloat.
 
 ## Features
 
-### HUD System
+## HUD System
+
+DropperUtils includes a fully customizable HUD system:
 
 * Custom HUD Editor
-* Move HUD elements anywhere on your screen
-* Save HUD positions automatically
+* Drag and drop HUD positioning
+* Automatic HUD position saving
+* UI scale compatible positioning
+* Per-HUD customization panels
 * Adjustable HUD scaling
-* Custom HUD settings panels
+* Modern HUD editor interface
 
 ### Current HUDs
 
@@ -19,25 +23,34 @@ A lightweight Minecraft Fabric PvP and QoL mod focused on improving gameplay wit
 * Potion Effects HUD
 * Debug HUD
 
-### PvP Features
+## PvP Features
 
-* Anchor Optimizer
+### Anchor Optimizer
+
+* Faster anchor placement workflow
+* Improved anchor timing support
+* Explosion prediction
+* Optimized fast anchor techniques
+
+### Other PvP Improvements
+
 * Low Screen Fire
 * No Explosion Effects
 * No Fire Overlay
 
-### Visual Features
+## Visual Features
 
 * Fullbright
 * Zoom
 * Customizable quality of life improvements
+* Lightweight visual enhancements
 
 ## Installation
 
 1. Install Fabric Loader
 2. Install Fabric API
 3. Download DropperUtils
-4. Put the mod file into your `.minecraft/mods` folder
+4. Place the mod file into your `.minecraft/mods` folder
 
 ## Requirements
 
@@ -52,6 +65,10 @@ Built with:
 * Java
 * Fabric API
 * Minecraft Client API
+
+## Contributing
+
+Suggestions, bug reports, and contributions are welcome.
 
 ## License
 

@@ -67,6 +67,10 @@ public class HudMouseHandler {
         }
     }
 
+    public static boolean hasMoved() {
+        return moved;
+    }
+
 
     public static HudElement getHovered() {
         return hovered;

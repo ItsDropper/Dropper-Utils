@@ -54,8 +54,8 @@ public class PotionEffectsHudElement extends HudElement {
             graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     texture,
-                    x,
-                    y + offset,
+                    getX(),
+                    getY() + offset,
                     18,
                     18
             );
@@ -84,8 +84,8 @@ public class PotionEffectsHudElement extends HudElement {
             graphics.drawString(
                     mc.font,
                     name,
-                    x + 22,
-                    y + offset + 1,
+                    getX() + 22,
+                    getY() + offset + 1,
                     0xFFFFFFFF
             );
 
@@ -93,8 +93,8 @@ public class PotionEffectsHudElement extends HudElement {
             graphics.drawString(
                     mc.font,
                     duration,
-                    x + 22,
-                    y + offset + 10,
+                    getX() + 22,
+                    getY() + offset + 10,
                     0xFFAAAAAA
             );
 
@@ -106,10 +106,10 @@ public class PotionEffectsHudElement extends HudElement {
         if (HudEditorFeature.INSTANCE.isEnabled()) {
 
             graphics.fill(
-                    x - 2,
-                    y - 2,
-                    x + getWidth(),
-                    y + getHeight(),
+                    getX() - 2,
+                    getY() - 2,
+                    getX() + getWidth(),
+                    getY()+ getHeight(),
                     0x55FFFFFF
             );
         }
@@ -119,8 +119,8 @@ public class PotionEffectsHudElement extends HudElement {
     @Override
     public void savePosition() {
 
-        DropperUtilsConfig.get().potionHudX = x;
-        DropperUtilsConfig.get().potionHudY = y;
+        DropperUtilsConfig.get().potionHudX = xPercent;
+        DropperUtilsConfig.get().potionHudY = yPercent;
 
         DropperUtilsConfig.save();
     }
@@ -128,13 +128,19 @@ public class PotionEffectsHudElement extends HudElement {
 
     @Override
     public int getWidth() {
-        return 150;
+        return 125;
     }
-
 
     @Override
     public int getHeight() {
-        return 100;
+        if (Minecraft.getInstance().player == null) {
+            return 24;
+        }
+
+        return Math.max(
+                24,
+                Minecraft.getInstance().player.getActiveEffects().size() * 24
+        );
     }
 
 

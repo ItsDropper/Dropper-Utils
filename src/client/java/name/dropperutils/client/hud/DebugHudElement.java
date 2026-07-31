@@ -33,8 +33,8 @@ public class DebugHudElement extends HudElement {
         graphics.drawString(
                 mc.font,
                 "Tracked: " + AnchorOptimizer.getTrackedAnchors().size(),
-                x,
-                y,
+                getX(),
+                getY(),
                 0xFFFFFFFF
         );
 
@@ -44,8 +44,8 @@ public class DebugHudElement extends HudElement {
                         "Avg Scan: %.3f ms",
                         AnchorStats.getAverageScanTimeMs()
                 ),
-                x,
-                y + 11,
+                getX(),
+                getY() + 11,
                 0xFF00FF00
         );
 
@@ -55,18 +55,18 @@ public class DebugHudElement extends HudElement {
                         "Last Scan: %.3f ms",
                         AnchorStats.getLastScanTimeMs()
                 ),
-                x,
-                y + 22,
+                getX(),
+                getY() + 22,
                 0xFFFFFF00
         );
 
 
         if (HudEditorFeature.INSTANCE.isEnabled()) {
             graphics.fill(
-                    x - 2,
-                    y - 2,
-                    x + getWidth(),
-                    y + getHeight(),
+                    getX() - 2,
+                    getY() - 2,
+                    getX() + getWidth(),
+                    getY() + getHeight(),
                     0x55FFFFFF
             );
         }
@@ -87,8 +87,8 @@ public class DebugHudElement extends HudElement {
     @Override
     public void savePosition() {
 
-        DropperUtilsConfig.get().debugHudX = x;
-        DropperUtilsConfig.get().debugHudY = y;
+        DropperUtilsConfig.get().debugHudX = xPercent;
+        DropperUtilsConfig.get().debugHudY = yPercent;
 
         DropperUtilsConfig.save();
     }

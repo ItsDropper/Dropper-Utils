@@ -61,7 +61,7 @@ public class HudEditorScreen extends Screen {
             );
         }
 
-        HudSettingsPanel.render(graphics);
+        HudSettingsPanel.render(graphics, mouseX, mouseY);
 
         super.render(graphics, mouseX, mouseY, delta);
     }
@@ -86,7 +86,6 @@ public class HudEditorScreen extends Screen {
 
         if (hovered != null) {
 
-            HudSettingsPanel.setSelected(hovered);
 
             HudMouseHandler.startDragging(
                     hovered,
@@ -106,8 +105,16 @@ public class HudEditorScreen extends Screen {
             net.minecraft.client.input.MouseButtonEvent event
     ) {
 
+        HudElement hovered = HudMouseHandler.getHovered();
+
+        boolean moved = HudMouseHandler.hasMoved();
+
         HudMouseHandler.release();
         HudSettingsPanel.mouseReleased();
+
+        if (!moved && hovered != null) {
+            HudSettingsPanel.setSelected(hovered);
+        }
 
         return true;
     }

@@ -30,10 +30,6 @@ public class HudManager {
         add(new TotemCounterHudElement());
         add(new PotionEffectsHudElement());
 
-        // future:
-        // add(new PotionEffectsHudElement());
-        // add(new ArmorHudElement());
-        // add(new TotemHudElement());
     }
 
 

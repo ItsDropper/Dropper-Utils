@@ -51,7 +51,7 @@ public class TotemCounterHudElement extends HudElement {
 
         graphics.pose().pushMatrix();
 
-        graphics.pose().translate(x, y);
+        graphics.pose().translate(getX(), getY());
         graphics.pose().scale(scale);
 
         graphics.renderItem(
@@ -74,10 +74,10 @@ public class TotemCounterHudElement extends HudElement {
         if (HudEditorFeature.INSTANCE.isEnabled()) {
 
             graphics.fill(
-                    x - 2,
-                    y - 2,
-                    x + getWidth(),
-                    y + getHeight(),
+                    getX() - 2,
+                    getY() - 2,
+                    getX() + getWidth(),
+                    getY() + getHeight(),
                     0x55FFFFFF
             );
         }
@@ -87,8 +87,8 @@ public class TotemCounterHudElement extends HudElement {
     @Override
     public void savePosition() {
 
-        DropperUtilsConfig.get().totemHudX = x;
-        DropperUtilsConfig.get().totemHudY = y;
+        DropperUtilsConfig.get().totemHudX = xPercent;
+        DropperUtilsConfig.get().totemHudY = yPercent;
 
         DropperUtilsConfig.save();
     }

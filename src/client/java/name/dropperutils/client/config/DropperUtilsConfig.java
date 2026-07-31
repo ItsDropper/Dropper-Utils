@@ -40,14 +40,17 @@ public class DropperUtilsConfig {
     public int zoomFov = 30;
     public float zoomSpeed = 0.15f;
     public float totemCounterScale = 1.0f;
-    public int debugHudX = 5;
-    public int debugHudY = 300;
-    public int armorHudX = 20;
-    public int armorHudY = 200;
-    public int totemHudX = 300;
-    public int totemHudY = 200;
-    public int potionHudX = 5;
-    public int potionHudY = 20;
+    public float debugHudX = 0.01f;
+    public float debugHudY = 0.30f;
+
+    public float armorHudX = 0.02f;
+    public float armorHudY = 0.20f;
+
+    public float totemHudX = 0.30f;
+    public float totemHudY = 0.20f;
+
+    public float potionHudX = 0.01f;
+    public float potionHudY = 0.02f;
 
 
     private static DropperUtilsConfig INSTANCE;

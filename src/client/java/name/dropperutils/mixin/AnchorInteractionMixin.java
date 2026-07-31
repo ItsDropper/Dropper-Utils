@@ -22,7 +22,7 @@ public class AnchorInteractionMixin {
 
     @Inject(
             method = "useItemOn",
-            at = @At("HEAD")
+            at = @At("RETURN")
     )
     private void onUseAnchor(
             net.minecraft.client.player.LocalPlayer player,
@@ -65,6 +65,10 @@ public class AnchorInteractionMixin {
             return;
         }
 
+
+        if (!cir.getReturnValue().consumesAction()) {
+            return;
+        }
 
         AnchorPrediction.predict(pos);
         AnchorExplosionPrediction.predict(pos);
