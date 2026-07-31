@@ -21,7 +21,7 @@ public class DropperUtilsConfig {
             .toFile();
 
 
-    public int configVersion = 3;
+    public int configVersion = 4;
 
 
     public boolean armorHud = false;
@@ -114,6 +114,10 @@ public class DropperUtilsConfig {
                     migrateV3();
                 }
 
+                if (INSTANCE.configVersion < 4) {
+                    migrateV4();
+                }
+
 
                 // Fixes broken 2.1.1 configs
                 // that saved pixel positions as version 3
@@ -165,6 +169,25 @@ public class DropperUtilsConfig {
         convertHudPositions();
 
         INSTANCE.configVersion = 3;
+
+        save();
+    }
+
+    private static void migrateV4() {
+
+        System.out.println(
+                "[DropperUtils] Migrating config v3 -> v4"
+        );
+
+        if (INSTANCE.hudEditor) {
+            INSTANCE.hudEditor = false;
+        }
+
+        if (!INSTANCE.armorHudHorizontal) {
+            INSTANCE.armorHudHorizontal = true;
+        }
+
+        INSTANCE.configVersion = 4;
 
         save();
     }
