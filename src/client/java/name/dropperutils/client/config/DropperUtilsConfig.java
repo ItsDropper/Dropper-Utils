@@ -21,6 +21,9 @@ public class DropperUtilsConfig {
             .toFile();
 
 
+    public int configVersion = 2;
+
+
     public boolean armorHud = false;
     public boolean totemCounter = false;
     public boolean fullbright = true;
@@ -37,20 +40,29 @@ public class DropperUtilsConfig {
     public boolean hudEditor = false;
     public boolean armorHudHorizontal = true;
 
+
     public int zoomFov = 30;
+
     public float zoomSpeed = 0.15f;
+
     public float totemCounterScale = 1.0f;
+
+
     public float debugHudX = 0.01f;
     public float debugHudY = 0.30f;
+
 
     public float armorHudX = 0.02f;
     public float armorHudY = 0.20f;
 
+
     public float totemHudX = 0.30f;
     public float totemHudY = 0.20f;
 
+
     public float potionHudX = 0.01f;
     public float potionHudY = 0.02f;
+
 
 
     private static DropperUtilsConfig INSTANCE;
@@ -66,6 +78,7 @@ public class DropperUtilsConfig {
     }
 
 
+
     public static void save() {
 
         try (FileWriter writer = new FileWriter(FILE)) {
@@ -78,6 +91,7 @@ public class DropperUtilsConfig {
 
         }
     }
+
 
 
     public static void load() {
@@ -95,6 +109,14 @@ public class DropperUtilsConfig {
 
                 reader.close();
 
+
+                if (INSTANCE.configVersion < 2) {
+
+                    migrateConfig();
+
+                }
+
+
             } else {
 
                 INSTANCE = new DropperUtilsConfig();
@@ -102,11 +124,40 @@ public class DropperUtilsConfig {
 
             }
 
+
         } catch (Exception e) {
 
             e.printStackTrace();
+
             INSTANCE = new DropperUtilsConfig();
 
         }
+    }
+
+
+
+    private static void migrateConfig() {
+
+        System.out.println(
+                "[DropperUtils] Migrating config to v2"
+        );
+
+
+        INSTANCE.armorHudX /= 1000f;
+        INSTANCE.armorHudY /= 1000f;
+
+        INSTANCE.totemHudX /= 1000f;
+        INSTANCE.totemHudY /= 1000f;
+
+        INSTANCE.potionHudX /= 1000f;
+        INSTANCE.potionHudY /= 1000f;
+
+        INSTANCE.debugHudX /= 1000f;
+        INSTANCE.debugHudY /= 1000f;
+
+
+        INSTANCE.configVersion = 2;
+
+        save();
     }
 }
