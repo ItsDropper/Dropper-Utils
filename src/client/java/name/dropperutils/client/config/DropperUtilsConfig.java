@@ -21,14 +21,13 @@ public class DropperUtilsConfig {
             .toFile();
 
 
-    public int configVersion = 2;
+    public int configVersion = 3;
 
 
     public boolean armorHud = false;
     public boolean totemCounter = false;
     public boolean fullbright = true;
     public boolean saturation = true;
-
 
     public boolean zoom = true;
     public boolean smoothZoom = true;
@@ -42,7 +41,6 @@ public class DropperUtilsConfig {
 
 
     public int zoomFov = 30;
-
     public float zoomSpeed = 0.15f;
 
     public float totemCounterScale = 1.0f;
@@ -51,14 +49,11 @@ public class DropperUtilsConfig {
     public float debugHudX = 0.01f;
     public float debugHudY = 0.30f;
 
-
     public float armorHudX = 0.02f;
     public float armorHudY = 0.20f;
 
-
     public float totemHudX = 0.30f;
     public float totemHudY = 0.20f;
-
 
     public float potionHudX = 0.01f;
     public float potionHudY = 0.02f;
@@ -111,10 +106,18 @@ public class DropperUtilsConfig {
 
 
                 if (INSTANCE.configVersion < 2) {
-
-                    migrateConfig();
-
+                    migrateV2();
                 }
+
+
+                if (INSTANCE.configVersion < 3) {
+                    migrateV3();
+                }
+
+
+                // Fixes broken 2.1.1 configs
+                // that saved pixel positions as version 3
+                fixBrokenHudPositions();
 
 
             } else {
@@ -136,12 +139,84 @@ public class DropperUtilsConfig {
 
 
 
-    private static void migrateConfig() {
+    private static void migrateV2() {
 
         System.out.println(
-                "[DropperUtils] Migrating config to v2"
+                "[DropperUtils] Migrating config v1 -> v2"
         );
 
+
+        convertHudPositions();
+
+        INSTANCE.configVersion = 2;
+
+        save();
+    }
+
+
+
+    private static void migrateV3() {
+
+        System.out.println(
+                "[DropperUtils] Migrating config v2 -> v3"
+        );
+
+
+        convertHudPositions();
+
+        INSTANCE.configVersion = 3;
+
+        save();
+    }
+
+
+
+    private static void fixBrokenHudPositions() {
+
+        boolean changed = false;
+
+
+        if (INSTANCE.armorHudX > 1) {
+            INSTANCE.armorHudX /= 1000f;
+            INSTANCE.armorHudY /= 1000f;
+            changed = true;
+        }
+
+
+        if (INSTANCE.totemHudX > 1) {
+            INSTANCE.totemHudX /= 1000f;
+            INSTANCE.totemHudY /= 1000f;
+            changed = true;
+        }
+
+
+        if (INSTANCE.potionHudX > 1) {
+            INSTANCE.potionHudX /= 1000f;
+            INSTANCE.potionHudY /= 1000f;
+            changed = true;
+        }
+
+
+        if (INSTANCE.debugHudX > 1) {
+            INSTANCE.debugHudX /= 1000f;
+            INSTANCE.debugHudY /= 1000f;
+            changed = true;
+        }
+
+
+        if (changed) {
+
+            System.out.println(
+                    "[DropperUtils] Fixed broken HUD positions"
+            );
+
+            save();
+        }
+    }
+
+
+
+    private static void convertHudPositions() {
 
         INSTANCE.armorHudX /= 1000f;
         INSTANCE.armorHudY /= 1000f;
@@ -154,10 +229,5 @@ public class DropperUtilsConfig {
 
         INSTANCE.debugHudX /= 1000f;
         INSTANCE.debugHudY /= 1000f;
-
-
-        INSTANCE.configVersion = 2;
-
-        save();
     }
 }
