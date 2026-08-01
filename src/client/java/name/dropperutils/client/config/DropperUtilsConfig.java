@@ -97,18 +97,25 @@ public class DropperUtilsConfig {
 
                 FileReader reader = new FileReader(FILE);
 
-                INSTANCE = GSON.fromJson(
-                        reader,
-                        DropperUtilsConfig.class
-                );
+                com.google.gson.JsonObject json =
+                        GSON.fromJson(reader, com.google.gson.JsonObject.class);
 
                 reader.close();
 
+                boolean legacyConfig = !json.has("configVersion");
+
+                INSTANCE = GSON.fromJson(
+                        json,
+                        DropperUtilsConfig.class
+                );
+
+                if (legacyConfig) {
+                    INSTANCE.configVersion = 1;
+                }
 
                 if (INSTANCE.configVersion < 2) {
                     migrateV2();
                 }
-
 
                 if (INSTANCE.configVersion < 3) {
                     migrateV3();
@@ -118,11 +125,7 @@ public class DropperUtilsConfig {
                     migrateV4();
                 }
 
-
-                // Fixes broken 2.1.1 configs
-                // that saved pixel positions as version 3
                 fixBrokenHudPositions();
-
 
             } else {
 
@@ -131,11 +134,9 @@ public class DropperUtilsConfig {
 
             }
 
-
         } catch (Exception e) {
 
             e.printStackTrace();
-
             INSTANCE = new DropperUtilsConfig();
 
         }

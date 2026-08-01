@@ -16,7 +16,6 @@ public class Events {
 
     public static void register() {
 
-        DropperUtilsConfig.load();
 
         FullbrightFeature.INSTANCE.setEnabled(
                 DropperUtilsConfig.get().fullbright

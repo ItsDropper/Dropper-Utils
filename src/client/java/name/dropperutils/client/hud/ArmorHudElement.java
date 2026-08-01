@@ -30,6 +30,7 @@ public class ArmorHudElement extends HudElement {
     @Override
     public void render(GuiGraphics graphics) {
 
+
         if (!ArmorHudFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
             return;
@@ -41,6 +42,8 @@ public class ArmorHudElement extends HudElement {
         if (mc.player == null) {
             return;
         }
+
+
 
 
         ItemStack[] armor = new ItemStack[]{
@@ -133,38 +136,25 @@ public class ArmorHudElement extends HudElement {
             return;
         }
 
-
         int durability =
                 item.getMaxDamage() - item.getDamageValue();
-
 
         float percent =
                 (float) durability / item.getMaxDamage();
 
-
         int color;
-
 
         if (percent > 0.5f) {
             color = 0xFF00FF00;
-        }
-        else if (percent > 0.25f) {
+        } else if (percent > 0.25f) {
             color = 0xFFFFFF00;
-        }
-        else {
+        } else {
             color = 0xFFFF0000;
         }
 
-
-        graphics.renderItem(
-                item,
-                drawX,
-                drawY
-        );
-
+        graphics.renderItem(item, drawX, drawY);
 
         if (horizontal) {
-
             graphics.drawString(
                     mc.font,
                     durability + "",
@@ -173,9 +163,7 @@ public class ArmorHudElement extends HudElement {
                     color,
                     false
             );
-
         } else {
-
             graphics.drawString(
                     mc.font,
                     durability + "",
@@ -186,12 +174,8 @@ public class ArmorHudElement extends HudElement {
             );
         }
 
-
         int barWidth = 16;
-
-        int filled =
-                (int) (barWidth * percent);
-
+        int filled = (int) (barWidth * percent);
 
         graphics.fill(
                 drawX,
@@ -200,7 +184,6 @@ public class ArmorHudElement extends HudElement {
                 drawY + 20,
                 0xFF555555
         );
-
 
         graphics.fill(
                 drawX,
@@ -250,3 +233,4 @@ public class ArmorHudElement extends HudElement {
         return horizontal;
     }
 }
+
