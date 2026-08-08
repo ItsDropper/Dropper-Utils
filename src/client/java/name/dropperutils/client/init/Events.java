@@ -48,11 +48,11 @@ public class Events {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
-            if (Keybinds.gammaKey.consumeClick()) {
+            if (Keybinds.fullbrightKey.consumeClick()) {
                 FullbrightFeature.INSTANCE.toggle();
             }
 
-            FullbrightFeature.INSTANCE.tick();
+
 
             if (Keybinds.guiKey.consumeClick()) {
                 client.setScreen(new ClickGuiScreen());

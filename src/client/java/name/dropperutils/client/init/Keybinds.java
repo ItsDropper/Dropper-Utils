@@ -8,7 +8,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class Keybinds {
 
-    public static KeyMapping gammaKey;
+    public static KeyMapping fullbrightKey;
     public static KeyMapping zoomKey;
     public static KeyMapping guiKey;
     public static KeyMapping hudEditorKey;
@@ -24,9 +24,9 @@ public class Keybinds {
 
     public static void register() {
 
-        gammaKey = KeyBindingHelper.registerKeyBinding(
+        fullbrightKey = KeyBindingHelper.registerKeyBinding(
                 new KeyMapping(
-                        "key.dropperutils.gamma",
+                        "key.dropperutils.fullbright",
                         InputConstants.Type.KEYSYM,
                         GLFW.GLFW_KEY_K,
                         CATEGORY

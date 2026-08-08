@@ -11,7 +11,7 @@
 		"homepage": "https://github.com/ItsDropper/Dropper-Utils",
 		"sources": "https://github.com/ItsDropper/Dropper-Utils"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/dropperutils/icon.png",
 	"environment": "client",
 
