@@ -1,15 +1,15 @@
 {
   "required": true,
   "package": "name.dropperutils.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "client": [
-    "GameRendererMixin",
     "GuiMixin",
     "ParticleEngineMixin",
     "ScreenEffectRendererMixin",
     "AnchorInteractionMixin",
     "AnchorBlockUpdateMixin",
-    "LightTextureMixin"
+    "LightmapRenderStateExtractorMixin",
+    "CameraMixin"
   ],
   "injectors": {
     "defaultRequire": 1

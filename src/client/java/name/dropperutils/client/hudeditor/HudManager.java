@@ -4,7 +4,7 @@ import name.dropperutils.client.hud.ArmorHudElement;
 import name.dropperutils.client.hud.DebugHudElement;
 import name.dropperutils.client.hud.PotionEffectsHudElement;
 import name.dropperutils.client.hud.TotemCounterHudElement;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class HudManager {
         ELEMENTS.add(element);
     }
 
-    public static void render(GuiGraphics graphics) {
+    public static void render(GuiGraphicsExtractor graphics) {
 
         init();
 

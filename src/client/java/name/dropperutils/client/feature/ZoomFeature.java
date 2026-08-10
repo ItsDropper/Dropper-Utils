@@ -9,6 +9,9 @@ public class ZoomFeature extends Feature {
 
     private static boolean zooming = false;
 
+    private static float zoomProgress = 0.0f;
+    private static float previousZoomProgress = 0.0f;
+
     private static int zoomFov;
     private static float zoomSpeed;
 
@@ -17,17 +20,30 @@ public class ZoomFeature extends Feature {
     }
 
     public void tick(KeyMapping zoomKey) {
-
         if (!isEnabled()) {
             zooming = false;
-            return;
+        } else {
+            zooming = zoomKey.isDown();
         }
 
-        zooming = zoomKey.isDown();
+        previousZoomProgress = zoomProgress;
+
+        float target = zooming ? 1.0f : 0.0f;
+
+        zoomProgress += (target - zoomProgress) * zoomSpeed;
+
+        if (Math.abs(target - zoomProgress) < 0.001f) {
+            zoomProgress = target;
+        }
     }
 
     public static boolean isZooming() {
         return zooming;
+    }
+
+    public static float getZoomProgress(float partialTick) {
+        return previousZoomProgress
+                + (zoomProgress - previousZoomProgress) * partialTick;
     }
 
     public static float getZoomMultiplier() {

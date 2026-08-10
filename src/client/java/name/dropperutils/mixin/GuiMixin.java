@@ -1,7 +1,8 @@
 package name.dropperutils.mixin;
 
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 
@@ -11,8 +12,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
 import net.minecraft.resources.Identifier;
-import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffectUtil;
@@ -23,11 +24,11 @@ import name.dropperutils.client.feature.PotionEffectsFeature;
 public class GuiMixin {
 
     @Inject(
-            method = "renderFood",
+            method = "extractFood",
             at = @At("TAIL")
     )
     private void renderSaturation(
-            GuiGraphics guiGraphics,
+            GuiGraphicsExtractor guiGraphics,
             Player player,
             int i,
             int j,
@@ -40,7 +41,10 @@ public class GuiMixin {
 
         FoodData food = player.getFoodData();
 
-        int saturation = (int) Math.ceil(food.getSaturationLevel() / 2.0f);
+        int saturation =
+                (int) Math.ceil(
+                        food.getSaturationLevel() / 2.0f
+                );
 
         for (int l = 0; l < saturation; l++) {
 
@@ -48,7 +52,7 @@ public class GuiMixin {
             int iconY = i;
 
             guiGraphics.blit(
-                    RenderPipelines.GUI_TEXTURED,
+                    net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED,
                     Identifier.fromNamespaceAndPath(
                             "dropperutils",
                             "textures/gui/saturation.png"
@@ -66,12 +70,12 @@ public class GuiMixin {
     }
 
     @Inject(
-            method = "render",
+            method = "extractEffects",
             at = @At("TAIL")
     )
     private void renderPotionEffects(
-            GuiGraphics guiGraphics,
-            net.minecraft.client.DeltaTracker deltaTracker,
+            GuiGraphicsExtractor guiGraphics,
+            DeltaTracker deltaTracker,
             CallbackInfo ci
     ) {
 
@@ -88,7 +92,8 @@ public class GuiMixin {
         int x = 5;
         int y = 20;
 
-        for (MobEffectInstance effect : mc.player.getActiveEffects()) {
+        for (MobEffectInstance effect :
+                mc.player.getActiveEffects()) {
 
             String name = effect.getEffect()
                     .value()
@@ -96,18 +101,24 @@ public class GuiMixin {
                     .getString();
 
             String time = MobEffectUtil
-                    .formatDuration(effect, 1.0F, 20.0F)
+                    .formatDuration(
+                            effect,
+                            1.0F,
+                            20.0F
+                    )
                     .getString();
 
-            guiGraphics.drawString(
+            guiGraphics.text(
                     mc.font,
                     name + " " + time,
                     x,
                     y,
-                    0xFFFFFF
+                    0xFFFFFF,
+                    false
             );
 
             y += 12;
         }
     }
 }
+

@@ -1,9 +1,8 @@
 package name.dropperutils.client.hudeditor;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.Minecraft;
 import name.dropperutils.client.hud.ArmorHudElement;
-
 
 public class HudSettingsPanel {
 
@@ -24,7 +23,6 @@ public class HudSettingsPanel {
     private static final int PANEL_BORDER = 0xFF3A3A3A;
     private static final int ACCENT = 0xFF4A90E2;
 
-
     private static int getPanelX() {
 
         Minecraft mc = Minecraft.getInstance();
@@ -43,7 +41,6 @@ public class HudSettingsPanel {
                 )
         );
     }
-
 
     private static int getPanelY() {
 
@@ -64,28 +61,23 @@ public class HudSettingsPanel {
         );
     }
 
-
     public static void setSelected(HudElement element) {
-
         selected = element;
         open = true;
         draggingSlider = false;
     }
 
     public static void close() {
-
         open = false;
         selected = null;
     }
-
 
     public static void clear() {
         selected = null;
     }
 
-
     public static void render(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             int mouseX,
             int mouseY
     ) {
@@ -94,9 +86,7 @@ public class HudSettingsPanel {
             return;
         }
 
-
         Minecraft mc = Minecraft.getInstance();
-
 
         int panelWidth = PANEL_WIDTH;
         int panelHeight = PANEL_HEIGHT;
@@ -104,8 +94,6 @@ public class HudSettingsPanel {
         int x = getPanelX();
         int y = getPanelY();
 
-
-        // main body
         graphics.fill(
                 x + 4,
                 y,
@@ -122,7 +110,6 @@ public class HudSettingsPanel {
                 PANEL_BG
         );
 
-        // border
         graphics.fill(
                 x,
                 y,
@@ -179,8 +166,7 @@ public class HudSettingsPanel {
                 ACCENT
         );
 
-
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 "⚙ " + getDisplayName(selected),
                 x + 10,
@@ -188,18 +174,15 @@ public class HudSettingsPanel {
                 TEXT
         );
 
-
-
         if (selected instanceof ArmorHudElement) {
 
-            graphics.drawString(
+            graphics.text(
                     mc.font,
                     "Layout",
                     x + 10,
                     y + 55,
                     SUBTEXT
             );
-
 
             drawButton(
                     graphics,
@@ -212,7 +195,6 @@ public class HudSettingsPanel {
                     mouseX,
                     mouseY
             );
-
 
             drawButton(
                     graphics,
@@ -227,7 +209,6 @@ public class HudSettingsPanel {
             );
         }
 
-
         int sizeLabelY;
         int sliderY;
 
@@ -239,7 +220,7 @@ public class HudSettingsPanel {
             sliderY = y + 80;
         }
 
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 "Size: " + String.format("%.1fx", selected.getScale()),
                 x + 10,
@@ -279,11 +260,7 @@ public class HudSettingsPanel {
                 mouseX,
                 mouseY
         );
-
-
     }
-
-
 
     private static String getDisplayName(HudElement element) {
 
@@ -304,7 +281,6 @@ public class HudSettingsPanel {
             return false;
         }
 
-
         int panelWidth = PANEL_WIDTH;
         int panelHeight = PANEL_HEIGHT;
 
@@ -321,7 +297,6 @@ public class HudSettingsPanel {
                 armor.setHorizontal(false);
                 return true;
             }
-
 
             if (mouseX >= x + 95 &&
                     mouseX <= x + 170 &&
@@ -358,7 +333,6 @@ public class HudSettingsPanel {
             return true;
         }
 
-
         if (mouseX >= x + 10 &&
                 mouseX <= x + 90 &&
                 mouseY >= y + panelHeight - 35 &&
@@ -367,7 +341,6 @@ public class HudSettingsPanel {
             close();
             return true;
         }
-
 
         return false;
     }
@@ -409,7 +382,7 @@ public class HudSettingsPanel {
     }
 
     private static void drawButton(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             Minecraft mc,
             String text,
             int x,
@@ -426,10 +399,8 @@ public class HudSettingsPanel {
                         mouseY >= y &&
                         mouseY <= y + height;
 
-
         int color = hovered ? BUTTON_HOVER : BUTTON_BG;
 
-// middle parts
         graphics.fill(
                 x + 3,
                 y,
@@ -446,8 +417,7 @@ public class HudSettingsPanel {
                 color
         );
 
-
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 text,
                 x + 8,

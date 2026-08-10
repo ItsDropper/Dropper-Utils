@@ -6,7 +6,7 @@ import name.dropperutils.client.hudeditor.HudElement;
 import name.dropperutils.client.config.DropperUtilsConfig;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
@@ -28,7 +28,7 @@ public class ArmorHudElement extends HudElement {
     }
 
     @Override
-    protected void renderElement(GuiGraphics graphics) {
+    protected void renderElement(GuiGraphicsExtractor graphics) {
 
         if (!ArmorHudFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
@@ -66,7 +66,7 @@ public class ArmorHudElement extends HudElement {
     }
 
     private void renderVertical(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             ItemStack[] armor
     ) {
 
@@ -89,7 +89,7 @@ public class ArmorHudElement extends HudElement {
     }
 
     private void renderHorizontal(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             ItemStack[] armor
     ) {
 
@@ -112,7 +112,7 @@ public class ArmorHudElement extends HudElement {
     }
 
     private void drawArmor(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             Minecraft mc,
             ItemStack item,
             int drawX,
@@ -139,14 +139,14 @@ public class ArmorHudElement extends HudElement {
             color = 0xFFFF0000;
         }
 
-        graphics.renderItem(
+        graphics.item(
                 item,
                 drawX,
                 drawY
         );
 
         if (horizontal) {
-            graphics.drawString(
+            graphics.text(
                     mc.font,
                     durability + "",
                     drawX + 1,
@@ -155,7 +155,7 @@ public class ArmorHudElement extends HudElement {
                     false
             );
         } else {
-            graphics.drawString(
+            graphics.text(
                     mc.font,
                     durability + "",
                     drawX + 25,

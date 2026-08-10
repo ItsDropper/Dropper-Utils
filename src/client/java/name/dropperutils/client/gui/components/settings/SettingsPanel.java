@@ -2,7 +2,7 @@ package name.dropperutils.client.gui.components.settings;
 
 import name.dropperutils.client.feature.Feature;
 import name.dropperutils.client.gui.ClickGuiScreen;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -173,7 +173,7 @@ public class SettingsPanel {
         }
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(GuiGraphicsExtractor graphics) {
 
         if (feature == null) {
             return;
@@ -214,12 +214,13 @@ public class SettingsPanel {
                 0xFF7777FF
         );
 
-        graphics.drawString(
+        graphics.text(
                 screen.getFont(),
                 feature.getName() + " Settings",
                 x + 15,
                 y + 15,
-                0xFFFFFFFF
+                0xFFFFFFFF,
+                false
         );
 
         graphics.fill(
@@ -231,3 +232,4 @@ public class SettingsPanel {
         );
     }
 }
+

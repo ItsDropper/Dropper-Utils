@@ -1,7 +1,8 @@
 package name.dropperutils.client.hudeditor;
 
+import name.dropperutils.client.feature.HudEditorFeature;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -12,15 +13,15 @@ public class HudEditorScreen extends Screen {
     }
 
     @Override
-    public void render(
-            GuiGraphics graphics,
+    public void extractRenderState(
+            GuiGraphicsExtractor graphics,
             int mouseX,
             int mouseY,
             float delta
     ) {
         Minecraft mc = Minecraft.getInstance();
 
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 "Mouse: " + mouseX + ", " + mouseY,
                 5,
@@ -44,16 +45,16 @@ public class HudEditorScreen extends Screen {
 
         if (hovered != null) {
 
-            graphics.drawString(
-                    minecraft.font,
+            graphics.text(
+                    mc.font,
                     "Drag to move",
                     mouseX + 10,
                     mouseY + 10,
                     0xFFFFFFFF
             );
 
-            graphics.drawString(
-                    minecraft.font,
+            graphics.text(
+                    mc.font,
                     "Click to customize",
                     mouseX + 10,
                     mouseY + 22,
@@ -62,31 +63,23 @@ public class HudEditorScreen extends Screen {
         }
 
         HudSettingsPanel.render(graphics, mouseX, mouseY);
-
-        super.render(graphics, mouseX, mouseY, delta);
     }
-
 
     @Override
     public boolean mouseClicked(
             net.minecraft.client.input.MouseButtonEvent event,
             boolean doubleClick
     ) {
-
         double mouseX = event.x();
         double mouseY = event.y();
-
 
         if (HudSettingsPanel.mouseClicked(mouseX, mouseY)) {
             return true;
         }
 
-
         HudElement hovered = HudMouseHandler.getHovered();
 
         if (hovered != null) {
-
-
             HudMouseHandler.startDragging(
                     hovered,
                     mouseX,
@@ -99,12 +92,10 @@ public class HudEditorScreen extends Screen {
         return false;
     }
 
-
     @Override
     public boolean mouseReleased(
             net.minecraft.client.input.MouseButtonEvent event
     ) {
-
         HudElement hovered = HudMouseHandler.getHovered();
 
         boolean moved = HudMouseHandler.hasMoved();
@@ -119,35 +110,25 @@ public class HudEditorScreen extends Screen {
         return true;
     }
 
-
     @Override
     public boolean mouseDragged(
             net.minecraft.client.input.MouseButtonEvent event,
             double dragX,
             double dragY
     ) {
-
         double mouseX = event.x();
         double mouseY = event.y();
 
-        if (HudSettingsPanel.mouseDragged(
-                mouseX,
-                mouseY
-        )) {
+        if (HudSettingsPanel.mouseDragged(mouseX, mouseY)) {
             return true;
         }
 
         if (event.button() == 0) {
-
-            HudMouseHandler.drag(
-                    mouseX,
-                    mouseY
-            );
+            HudMouseHandler.drag(mouseX, mouseY);
         }
 
         return true;
     }
-
 
     @Override
     public boolean shouldCloseOnEsc() {

@@ -2,7 +2,7 @@ package name.dropperutils.client.gui.components.settings;
 
 import name.dropperutils.client.gui.ClickGuiScreen;
 import name.dropperutils.client.gui.components.FeatureSlider;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -62,7 +62,7 @@ public class SliderSetting implements Setting {
 
     @Override
     public void render(
-            GuiGraphics graphics,
+            GuiGraphicsExtractor graphics,
             ClickGuiScreen screen,
             int x,
             int y
@@ -86,3 +86,4 @@ public class SliderSetting implements Setting {
         return 30;
     }
 }
+

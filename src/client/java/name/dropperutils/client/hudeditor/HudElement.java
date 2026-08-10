@@ -1,7 +1,7 @@
 package name.dropperutils.client.hudeditor;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public abstract class HudElement {
 
@@ -81,7 +81,7 @@ public abstract class HudElement {
         return (int) (getHeight() * scale);
     }
 
-    public final void render(GuiGraphics graphics) {
+    public final void render(GuiGraphicsExtractor graphics) {
 
         graphics.pose().pushMatrix();
 
@@ -98,7 +98,7 @@ public abstract class HudElement {
     }
 
     protected abstract void renderElement(
-            GuiGraphics graphics
+            GuiGraphicsExtractor graphics
     );
 
     public abstract int getWidth();
@@ -108,7 +108,7 @@ public abstract class HudElement {
     public void savePosition() {
     }
 
-    public final void renderScaled(GuiGraphics graphics) {
+    public final void renderScaled(GuiGraphicsExtractor graphics) {
 
         graphics.pose().pushMatrix();
 
@@ -119,5 +119,5 @@ public abstract class HudElement {
 
         graphics.pose().popMatrix();
     }
-
 }
+

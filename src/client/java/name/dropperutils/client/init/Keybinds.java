@@ -1,9 +1,9 @@
 package name.dropperutils.client.init;
 
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
-import com.mojang.blaze3d.platform.InputConstants;
 import org.lwjgl.glfw.GLFW;
 
 public class Keybinds {
@@ -21,10 +21,9 @@ public class Keybinds {
                     )
             );
 
-
     public static void register() {
 
-        fullbrightKey = KeyBindingHelper.registerKeyBinding(
+        fullbrightKey = KeyMappingHelper.registerKeyMapping(
                 new KeyMapping(
                         "key.dropperutils.fullbright",
                         InputConstants.Type.KEYSYM,
@@ -33,7 +32,7 @@ public class Keybinds {
                 )
         );
 
-        zoomKey = KeyBindingHelper.registerKeyBinding(
+        zoomKey = KeyMappingHelper.registerKeyMapping(
                 new KeyMapping(
                         "key.dropperutils.zoom",
                         InputConstants.Type.KEYSYM,
@@ -42,7 +41,7 @@ public class Keybinds {
                 )
         );
 
-        guiKey = KeyBindingHelper.registerKeyBinding(
+        guiKey = KeyMappingHelper.registerKeyMapping(
                 new KeyMapping(
                         "key.dropperutils.gui",
                         InputConstants.Type.KEYSYM,
@@ -51,7 +50,7 @@ public class Keybinds {
                 )
         );
 
-        hudEditorKey= KeyBindingHelper.registerKeyBinding(
+        hudEditorKey = KeyMappingHelper.registerKeyMapping(
                 new KeyMapping(
                         "key.dropperutils.hud_editor",
                         InputConstants.Type.KEYSYM,
@@ -61,3 +60,4 @@ public class Keybinds {
         );
     }
 }
+

@@ -6,7 +6,7 @@ import name.dropperutils.client.feature.TotemCounterFeature;
 import name.dropperutils.client.hudeditor.HudElement;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -22,7 +22,7 @@ public class TotemCounterHudElement extends HudElement {
     }
 
     @Override
-    protected void renderElement(GuiGraphics graphics) {
+    protected void renderElement(GuiGraphicsExtractor graphics) {
 
         if (!TotemCounterFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
@@ -42,18 +42,19 @@ public class TotemCounterHudElement extends HudElement {
         ItemStack stack =
                 new ItemStack(Items.TOTEM_OF_UNDYING);
 
-        graphics.renderItem(
+        graphics.item(
                 stack,
                 0,
                 0
         );
 
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 String.valueOf(count),
                 20,
                 5,
-                0xFF00FF00
+                0xFF00FF00,
+                false
         );
 
         if (HudEditorFeature.INSTANCE.isEnabled()) {
@@ -95,7 +96,9 @@ public class TotemCounterHudElement extends HudElement {
         DropperUtilsConfig.save();
     }
 
+    @Override
     public float getScale() {
         return scale;
     }
 }
+

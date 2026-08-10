@@ -8,7 +8,7 @@ import name.dropperutils.client.util.AnchorStats;
 import name.dropperutils.client.util.AnchorTracker;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class DebugHudElement extends HudElement {
 
@@ -22,7 +22,7 @@ public class DebugHudElement extends HudElement {
     }
 
     @Override
-    protected void renderElement(GuiGraphics graphics) {
+    protected void renderElement(GuiGraphicsExtractor graphics) {
 
         if (!DebugHudFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
@@ -31,15 +31,16 @@ public class DebugHudElement extends HudElement {
 
         Minecraft mc = Minecraft.getInstance();
 
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 "Tracked: " + AnchorTracker.getTrackedAnchors().size(),
                 0,
                 0,
-                0xFFFFFFFF
+                0xFFFFFFFF,
+                false
         );
 
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 String.format(
                         "Avg Scan: %.3f ms",
@@ -47,10 +48,11 @@ public class DebugHudElement extends HudElement {
                 ),
                 0,
                 11,
-                0xFF00FF00
+                0xFF00FF00,
+                false
         );
 
-        graphics.drawString(
+        graphics.text(
                 mc.font,
                 String.format(
                         "Last Scan: %.3f ms",
@@ -58,7 +60,8 @@ public class DebugHudElement extends HudElement {
                 ),
                 0,
                 22,
-                0xFFFFFF00
+                0xFFFFFF00,
+                false
         );
 
         if (HudEditorFeature.INSTANCE.isEnabled()) {
@@ -84,7 +87,6 @@ public class DebugHudElement extends HudElement {
 
     @Override
     public void savePosition() {
-
         DropperUtilsConfig.get().debugHudX = xPercent;
         DropperUtilsConfig.get().debugHudY = yPercent;
 
@@ -93,7 +95,6 @@ public class DebugHudElement extends HudElement {
 
     @Override
     public void setScale(float value) {
-
         scale = Math.max(
                 0.25f,
                 Math.min(value, 3.0f)
@@ -103,3 +104,4 @@ public class DebugHudElement extends HudElement {
         DropperUtilsConfig.save();
     }
 }
+

@@ -5,7 +5,7 @@ import name.dropperutils.client.feature.Feature;
 import name.dropperutils.client.gui.components.FeaturePanel;
 import name.dropperutils.client.gui.components.GuiInitializer;
 import name.dropperutils.client.gui.components.settings.SettingsPanel;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -20,14 +20,12 @@ public class ClickGuiScreen extends Screen {
     private SettingsPanel settingsPanel;
     private Feature selectedFeature;
 
-
     public ClickGuiScreen() {
         super(Component.literal("DropperUtils"));
     }
 
     @Override
     protected void init() {
-
         settingsPanel = new SettingsPanel(this);
 
         rebuildWidgets();
@@ -43,7 +41,6 @@ public class ClickGuiScreen extends Screen {
 
     @Override
     protected void rebuildWidgets() {
-
         clearWidgets();
 
         GuiInitializer.setup(this);
@@ -62,7 +59,6 @@ public class ClickGuiScreen extends Screen {
     }
 
     public void closeSettings() {
-
         selectedFeature = null;
 
         settingsPanel.close();
@@ -84,13 +80,12 @@ public class ClickGuiScreen extends Screen {
     }
 
     @Override
-    public void render(
-            GuiGraphics graphics,
+    public void extractRenderState(
+            GuiGraphicsExtractor graphics,
             int mouseX,
             int mouseY,
             float delta
     ) {
-
         graphics.fill(
                 0,
                 0,
@@ -99,7 +94,7 @@ public class ClickGuiScreen extends Screen {
                 0x99000000
         );
 
-        graphics.drawCenteredString(
+        graphics.centeredText(
                 font,
                 "DropperUtils",
                 width / 2,
@@ -111,7 +106,7 @@ public class ClickGuiScreen extends Screen {
             settingsPanel.render(graphics);
         }
 
-        super.render(graphics, mouseX, mouseY, delta);
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
     }
 
     @Override
@@ -150,7 +145,4 @@ public class ClickGuiScreen extends Screen {
     public void removeWidgetPublic(GuiEventListener widget) {
         removeWidget(widget);
     }
-
-
-
 }

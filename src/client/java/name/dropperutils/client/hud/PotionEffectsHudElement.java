@@ -6,7 +6,7 @@ import name.dropperutils.client.feature.PotionEffectsFeature;
 import name.dropperutils.client.hudeditor.HudElement;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -26,7 +26,7 @@ public class PotionEffectsHudElement extends HudElement {
     }
 
     @Override
-    protected void renderElement(GuiGraphics graphics) {
+    protected void renderElement(GuiGraphicsExtractor graphics) {
 
         if (!PotionEffectsFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
@@ -74,20 +74,22 @@ public class PotionEffectsHudElement extends HudElement {
                     mc.level.tickRateManager().tickrate()
             );
 
-            graphics.drawString(
+            graphics.text(
                     mc.font,
                     name,
                     22,
                     offset + 1,
-                    0xFFFFFFFF
+                    0xFFFFFFFF,
+                    false
             );
 
-            graphics.drawString(
+            graphics.text(
                     mc.font,
                     duration,
                     22,
                     offset + 10,
-                    0xFFAAAAAA
+                    0xFFAAAAAA,
+                    false
             );
 
             offset += 24;
@@ -160,3 +162,4 @@ public class PotionEffectsHudElement extends HudElement {
         DropperUtilsConfig.save();
     }
 }
+
