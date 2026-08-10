@@ -8,7 +8,7 @@ public class LowFireFeature extends Feature {
             new LowFireFeature();
 
     private LowFireFeature() {
-        super("No Fire Overlay", Category.VISUAL);
+        super("Low Fire", Category.VISUAL);
     }
 
     @Override

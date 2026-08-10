@@ -4,7 +4,8 @@ import name.dropperutils.client.config.DropperUtilsConfig;
 
 public class FullbrightFeature extends Feature {
 
-    public static final FullbrightFeature INSTANCE = new FullbrightFeature();
+    public static final FullbrightFeature INSTANCE =
+            new FullbrightFeature();
 
     private FullbrightFeature() {
         super("Fullbright", Category.VISUAL);
@@ -21,5 +22,15 @@ public class FullbrightFeature extends Feature {
         DropperUtilsConfig.get().fullbright = false;
         DropperUtilsConfig.save();
     }
-}
 
+    public static float getBrightness() {
+        return DropperUtilsConfig.get().fullbrightBrightness;
+    }
+
+    public static void setBrightness(float value) {
+        DropperUtilsConfig.get().fullbrightBrightness =
+                Math.max(0.0f, Math.min(value, 100.0f));
+
+        DropperUtilsConfig.save();
+    }
+}

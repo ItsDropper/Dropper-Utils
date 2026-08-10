@@ -15,7 +15,6 @@ public class FeatureSlider {
     private final Supplier<Double> valueGetter;
     private final Consumer<Double> valueSetter;
 
-
     public FeatureSlider(
             int x,
             int y,
@@ -38,32 +37,44 @@ public class FeatureSlider {
                 y,
                 150,
                 20,
-                getText(),
+                getText(current),
                 (current - min) / (max - min)
         ) {
+
             @Override
             protected void updateMessage() {
-                setMessage(getText());
+                setMessage(getText(min + this.value * (max - min)));
             }
 
             @Override
             protected void applyValue() {
-                double newValue = min + this.value * (max - min);
+                double newValue =
+                        min + this.value * (max - min);
+
                 valueSetter.accept(newValue);
             }
         };
     }
 
+    private Component getText(double value) {
 
-    private Component getText() {
+        if (max - min == 100) {
+            return Component.literal(
+                    name + ": " + String.format("%.0f%%", value)
+            );
+        }
+
         return Component.literal(
-                name + ": " +
-                        String.format("%.1f", valueGetter.get())
+                name + ": " + String.format("%.2f", value)
         );
     }
 
-
     public AbstractSliderButton getSlider() {
         return slider;
+    }
+
+    public void setPosition(int x, int y) {
+        slider.setX(x);
+        slider.setY(y);
     }
 }

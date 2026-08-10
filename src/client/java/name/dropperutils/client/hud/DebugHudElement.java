@@ -1,11 +1,11 @@
 package name.dropperutils.client.hud;
 
+import name.dropperutils.client.config.DropperUtilsConfig;
 import name.dropperutils.client.feature.DebugHudFeature;
 import name.dropperutils.client.feature.HudEditorFeature;
 import name.dropperutils.client.hudeditor.HudElement;
-import name.dropperutils.client.util.AnchorOptimizer;
 import name.dropperutils.client.util.AnchorStats;
-import name.dropperutils.client.config.DropperUtilsConfig;
+import name.dropperutils.client.util.AnchorTracker;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,11 +17,12 @@ public class DebugHudElement extends HudElement {
                 DropperUtilsConfig.get().debugHudX,
                 DropperUtilsConfig.get().debugHudY
         );
+
+        scale = DropperUtilsConfig.get().debugHudScale;
     }
 
-
     @Override
-    public void render(GuiGraphics graphics) {
+    protected void renderElement(GuiGraphics graphics) {
 
         if (!DebugHudFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
@@ -32,9 +33,9 @@ public class DebugHudElement extends HudElement {
 
         graphics.drawString(
                 mc.font,
-                "Tracked: " + AnchorOptimizer.getTrackedAnchors().size(),
-                getX(),
-                getY(),
+                "Tracked: " + AnchorTracker.getTrackedAnchors().size(),
+                0,
+                0,
                 0xFFFFFFFF
         );
 
@@ -44,8 +45,8 @@ public class DebugHudElement extends HudElement {
                         "Avg Scan: %.3f ms",
                         AnchorStats.getAverageScanTimeMs()
                 ),
-                getX(),
-                getY() + 11,
+                0,
+                11,
                 0xFF00FF00
         );
 
@@ -55,29 +56,26 @@ public class DebugHudElement extends HudElement {
                         "Last Scan: %.3f ms",
                         AnchorStats.getLastScanTimeMs()
                 ),
-                getX(),
-                getY() + 22,
+                0,
+                22,
                 0xFFFFFF00
         );
 
-
         if (HudEditorFeature.INSTANCE.isEnabled()) {
             graphics.fill(
-                    getX() - 2,
-                    getY() - 2,
-                    getX() + getWidth(),
-                    getY() + getHeight(),
+                    -2,
+                    -2,
+                    getWidth(),
+                    getHeight(),
                     0x55FFFFFF
             );
         }
     }
 
-
     @Override
     public int getWidth() {
         return 120;
     }
-
 
     @Override
     public int getHeight() {
@@ -90,6 +88,18 @@ public class DebugHudElement extends HudElement {
         DropperUtilsConfig.get().debugHudX = xPercent;
         DropperUtilsConfig.get().debugHudY = yPercent;
 
+        DropperUtilsConfig.save();
+    }
+
+    @Override
+    public void setScale(float value) {
+
+        scale = Math.max(
+                0.25f,
+                Math.min(value, 3.0f)
+        );
+
+        DropperUtilsConfig.get().debugHudScale = scale;
         DropperUtilsConfig.save();
     }
 }

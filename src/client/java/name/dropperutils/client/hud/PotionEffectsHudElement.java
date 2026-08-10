@@ -21,17 +21,17 @@ public class PotionEffectsHudElement extends HudElement {
                 DropperUtilsConfig.get().potionHudX,
                 DropperUtilsConfig.get().potionHudY
         );
+
+        scale = DropperUtilsConfig.get().potionHudScale;
     }
 
-
     @Override
-    public void render(GuiGraphics graphics) {
+    protected void renderElement(GuiGraphics graphics) {
 
         if (!PotionEffectsFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
             return;
         }
-
 
         Minecraft mc = Minecraft.getInstance();
 
@@ -39,9 +39,7 @@ public class PotionEffectsHudElement extends HudElement {
             return;
         }
 
-
         int offset = 0;
-
 
         for (MobEffectInstance effect : mc.player.getActiveEffects()) {
 
@@ -50,22 +48,19 @@ public class PotionEffectsHudElement extends HudElement {
                     .map(key -> key.identifier().withPrefix("mob_effect/"))
                     .orElse(MissingTextureAtlasSprite.getLocation());
 
-
             graphics.blitSprite(
                     RenderPipelines.GUI_TEXTURED,
                     texture,
-                    getX(),
-                    getY() + offset,
+                    0,
+                    offset,
                     18,
                     18
             );
-
 
             String name = effect.getEffect()
                     .value()
                     .getDisplayName()
                     .getString();
-
 
             int amplifier = effect.getAmplifier();
 
@@ -73,58 +68,49 @@ public class PotionEffectsHudElement extends HudElement {
                 name += " " + toRoman(amplifier + 1);
             }
 
-
             Component duration = MobEffectUtil.formatDuration(
                     effect,
                     1.0F,
                     mc.level.tickRateManager().tickrate()
             );
 
-
             graphics.drawString(
                     mc.font,
                     name,
-                    getX() + 22,
-                    getY() + offset + 1,
+                    22,
+                    offset + 1,
                     0xFFFFFFFF
             );
-
 
             graphics.drawString(
                     mc.font,
                     duration,
-                    getX() + 22,
-                    getY() + offset + 10,
+                    22,
+                    offset + 10,
                     0xFFAAAAAA
             );
-
 
             offset += 24;
         }
 
-
         if (HudEditorFeature.INSTANCE.isEnabled()) {
-
             graphics.fill(
-                    getX() - 2,
-                    getY() - 2,
-                    getX() + getWidth(),
-                    getY()+ getHeight(),
+                    -2,
+                    -2,
+                    getWidth(),
+                    getHeight(),
                     0x55FFFFFF
             );
         }
     }
 
-
     @Override
     public void savePosition() {
-
         DropperUtilsConfig.get().potionHudX = xPercent;
         DropperUtilsConfig.get().potionHudY = yPercent;
 
         DropperUtilsConfig.save();
     }
-
 
     @Override
     public int getWidth() {
@@ -133,16 +119,19 @@ public class PotionEffectsHudElement extends HudElement {
 
     @Override
     public int getHeight() {
+
         if (Minecraft.getInstance().player == null) {
             return 24;
         }
 
         return Math.max(
                 24,
-                Minecraft.getInstance().player.getActiveEffects().size() * 24
+                Minecraft.getInstance()
+                        .player
+                        .getActiveEffects()
+                        .size() * 24
         );
     }
-
 
     private static String toRoman(int number) {
         return switch (number) {
@@ -157,5 +146,17 @@ public class PotionEffectsHudElement extends HudElement {
             case 10 -> "X";
             default -> String.valueOf(number);
         };
+    }
+
+    @Override
+    public void setScale(float value) {
+
+        scale = Math.max(
+                0.25f,
+                Math.min(value, 3.0f)
+        );
+
+        DropperUtilsConfig.get().potionHudScale = scale;
+        DropperUtilsConfig.save();
     }
 }

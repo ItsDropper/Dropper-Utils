@@ -75,9 +75,11 @@ public class GuiInitializer {
                 continue;
             }
 
-            FeatureButton button = new FeatureButton(
+            final int featureY = y;
+
+            FeatureButton featureButton = new FeatureButton(
                     panel.getX(),
-                    y,
+                    featureY,
                     feature.getName(),
                     () -> {
                         feature.toggle();
@@ -87,14 +89,28 @@ public class GuiInitializer {
                     feature::isEnabled
             );
 
-            screen.addButton(button.getButton());
+            screen.addButton(featureButton.getButton());
+
+            screen.addButton(
+                    Button.builder(
+                                    Component.literal(">"),
+                                    b -> screen.openSettings(
+                                            feature,
+                                            panel.getX() + 175,
+                                            featureY
+                                    )
+                            )
+                            .bounds(
+                                    panel.getX() + 155,
+                                    featureY,
+                                    20,
+                                    20
+                            )
+                            .build()
+            );
 
             y += 25;
         }
 
-        SliderPanel.addSliders(
-                screen,
-                screen.getScreenWidth() / 2 - 75
-        );
     }
 }

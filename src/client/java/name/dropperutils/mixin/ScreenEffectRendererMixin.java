@@ -1,5 +1,6 @@
 package name.dropperutils.mixin;
 
+import name.dropperutils.client.config.DropperUtilsConfig;
 import name.dropperutils.client.feature.LowFireFeature;
 
 import net.minecraft.client.renderer.ScreenEffectRenderer;
@@ -17,18 +18,26 @@ public class ScreenEffectRendererMixin {
 
     @Inject(
             method = "renderFire",
-            at = @At("HEAD"),
-            cancellable = true
+            at = @At("HEAD")
     )
-    private static void removeFire(
+    private static void lowerFire(
             PoseStack poseStack,
             MultiBufferSource bufferSource,
             TextureAtlasSprite sprite,
             CallbackInfo ci
     ) {
 
-        if (LowFireFeature.INSTANCE.isEnabled()) {
-            ci.cancel();
+        if (!LowFireFeature.INSTANCE.isEnabled()) {
+            return;
         }
+
+        float height =
+                DropperUtilsConfig.get().lowFireHeight;
+
+        poseStack.translate(
+                0.0f,
+                -height,
+                0.0f
+        );
     }
 }

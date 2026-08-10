@@ -42,7 +42,12 @@ public class DropperUtilsConfig {
 
     public int zoomFov = 30;
     public float zoomSpeed = 0.15f;
+    public float lowFireHeight = 0.5f;
+    public float fullbrightBrightness = 100.0f;
 
+    public float armorHudScale = 1.0f;
+    public float debugHudScale = 1.0f;
+    public float potionHudScale = 1.0f;
     public float totemCounterScale = 1.0f;
 
 

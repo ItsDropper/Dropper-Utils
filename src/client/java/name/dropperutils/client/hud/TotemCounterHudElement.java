@@ -12,8 +12,6 @@ import net.minecraft.world.item.Items;
 
 public class TotemCounterHudElement extends HudElement {
 
-    private float scale;
-
     public TotemCounterHudElement() {
         super(
                 DropperUtilsConfig.get().totemHudX,
@@ -21,18 +19,15 @@ public class TotemCounterHudElement extends HudElement {
         );
 
         scale = DropperUtilsConfig.get().totemCounterScale;
-
     }
 
-
     @Override
-    public void render(GuiGraphics graphics) {
+    protected void renderElement(GuiGraphics graphics) {
 
         if (!TotemCounterFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
             return;
         }
-
 
         Minecraft mc = Minecraft.getInstance();
 
@@ -40,19 +35,12 @@ public class TotemCounterHudElement extends HudElement {
             return;
         }
 
-
         int count = mc.player
                 .getInventory()
                 .countItem(Items.TOTEM_OF_UNDYING);
 
-
-        ItemStack stack = new ItemStack(Items.TOTEM_OF_UNDYING);
-
-
-        graphics.pose().pushMatrix();
-
-        graphics.pose().translate(getX(), getY());
-        graphics.pose().scale(scale);
+        ItemStack stack =
+                new ItemStack(Items.TOTEM_OF_UNDYING);
 
         graphics.renderItem(
                 stack,
@@ -68,21 +56,16 @@ public class TotemCounterHudElement extends HudElement {
                 0xFF00FF00
         );
 
-        graphics.pose().popMatrix();
-
-
         if (HudEditorFeature.INSTANCE.isEnabled()) {
-
             graphics.fill(
-                    getX() - 2,
-                    getY() - 2,
-                    getX() + getWidth(),
-                    getY() + getHeight(),
+                    -2,
+                    -2,
+                    getWidth(),
+                    getHeight(),
                     0x55FFFFFF
             );
         }
     }
-
 
     @Override
     public void savePosition() {
@@ -93,31 +76,26 @@ public class TotemCounterHudElement extends HudElement {
         DropperUtilsConfig.save();
     }
 
-
     @Override
     public int getWidth() {
         return 45;
     }
-
 
     @Override
     public int getHeight() {
         return 35;
     }
 
+    @Override
     public void setScale(float value) {
 
+        super.setScale(value);
 
-
-        scale = value;
-
-        DropperUtilsConfig.get().totemCounterScale = value;
+        DropperUtilsConfig.get().totemCounterScale = scale;
         DropperUtilsConfig.save();
     }
 
-
     public float getScale() {
-
         return scale;
     }
 }

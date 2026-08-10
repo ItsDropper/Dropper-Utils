@@ -15,7 +15,6 @@ public class HudManager {
 
     private static boolean initialized = false;
 
-
     public static void init() {
 
         if (initialized) {
@@ -24,35 +23,24 @@ public class HudManager {
 
         initialized = true;
 
-
         add(new DebugHudElement());
         add(new ArmorHudElement());
         add(new TotemCounterHudElement());
         add(new PotionEffectsHudElement());
-
     }
-
 
     public static void add(HudElement element) {
         ELEMENTS.add(element);
     }
 
-
     public static void render(GuiGraphics graphics) {
 
         init();
 
-
         for (HudElement element : ELEMENTS) {
-
-            graphics.pose().pushMatrix();
-
-            element.render(graphics);
-
-            graphics.pose().popMatrix();
+            element.renderScaled(graphics);
         }
     }
-
 
     public static List<HudElement> getElements() {
         return ELEMENTS;

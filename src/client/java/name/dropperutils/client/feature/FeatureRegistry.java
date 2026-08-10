@@ -14,8 +14,7 @@ public class FeatureRegistry {
             DebugHudFeature.INSTANCE,
             NoExplosionEffectsFeature.INSTANCE,
             LowFireFeature.INSTANCE,
-            PotionEffectsFeature.INSTANCE,
-            HudEditorFeature.INSTANCE
+            PotionEffectsFeature.INSTANCE
     );
 
     public static void loadConfigs() {

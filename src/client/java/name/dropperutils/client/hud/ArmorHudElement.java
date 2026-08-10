@@ -14,7 +14,6 @@ public class ArmorHudElement extends HudElement {
 
     private boolean horizontal;
 
-
     public ArmorHudElement() {
 
         super(
@@ -22,29 +21,25 @@ public class ArmorHudElement extends HudElement {
                 DropperUtilsConfig.get().armorHudY
         );
 
+        scale = DropperUtilsConfig.get().armorHudScale;
+
         horizontal =
                 DropperUtilsConfig.get().armorHudHorizontal;
     }
 
-
     @Override
-    public void render(GuiGraphics graphics) {
-
+    protected void renderElement(GuiGraphics graphics) {
 
         if (!ArmorHudFeature.INSTANCE.isEnabled()
                 && !HudEditorFeature.INSTANCE.isEnabled()) {
             return;
         }
 
-
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.player == null) {
             return;
         }
-
-
-
 
         ItemStack[] armor = new ItemStack[]{
                 mc.player.getItemBySlot(EquipmentSlot.HEAD),
@@ -53,26 +48,22 @@ public class ArmorHudElement extends HudElement {
                 mc.player.getItemBySlot(EquipmentSlot.FEET)
         };
 
-
         if (horizontal) {
             renderHorizontal(graphics, armor);
         } else {
             renderVertical(graphics, armor);
         }
 
-
         if (HudEditorFeature.INSTANCE.isEnabled()) {
-
             graphics.fill(
-                    getX() - 2,
-                    getY() - 2,
-                    getX() + getWidth(),
-                    getY() + getHeight(),
+                    -2,
+                    -2,
+                    getWidth(),
+                    getHeight(),
                     0x55FFFFFF
             );
         }
     }
-
 
     private void renderVertical(
             GuiGraphics graphics,
@@ -83,21 +74,19 @@ public class ArmorHudElement extends HudElement {
 
         int offset = 0;
 
-
         for (ItemStack item : armor) {
 
             drawArmor(
                     graphics,
                     mc,
                     item,
-                    getX(),
-                    getY() + offset
+                    0,
+                    offset
             );
 
             offset += 22;
         }
     }
-
 
     private void renderHorizontal(
             GuiGraphics graphics,
@@ -108,21 +97,19 @@ public class ArmorHudElement extends HudElement {
 
         int offset = 0;
 
-
         for (ItemStack item : armor) {
 
             drawArmor(
                     graphics,
                     mc,
                     item,
-                    getX() + offset,
-                    getY()
+                    offset,
+                    0
             );
 
             offset += 22;
         }
     }
-
 
     private void drawArmor(
             GuiGraphics graphics,
@@ -152,7 +139,11 @@ public class ArmorHudElement extends HudElement {
             color = 0xFFFF0000;
         }
 
-        graphics.renderItem(item, drawX, drawY);
+        graphics.renderItem(
+                item,
+                drawX,
+                drawY
+        );
 
         if (horizontal) {
             graphics.drawString(
@@ -175,7 +166,9 @@ public class ArmorHudElement extends HudElement {
         }
 
         int barWidth = 16;
-        int filled = (int) (barWidth * percent);
+
+        int filled =
+                (int) (barWidth * percent);
 
         graphics.fill(
                 drawX,
@@ -194,20 +187,15 @@ public class ArmorHudElement extends HudElement {
         );
     }
 
-
     @Override
     public int getWidth() {
-
         return horizontal ? 85 : 50;
     }
 
-
     @Override
     public int getHeight() {
-
         return horizontal ? 35 : 140;
     }
-
 
     @Override
     public void savePosition() {
@@ -218,7 +206,6 @@ public class ArmorHudElement extends HudElement {
         DropperUtilsConfig.save();
     }
 
-
     public void setHorizontal(boolean value) {
 
         horizontal = value;
@@ -227,10 +214,19 @@ public class ArmorHudElement extends HudElement {
         DropperUtilsConfig.save();
     }
 
-
     public boolean isHorizontal() {
-
         return horizontal;
     }
-}
 
+    @Override
+    public void setScale(float value) {
+
+        scale = Math.max(
+                0.25f,
+                Math.min(value, 3.0f)
+        );
+
+        DropperUtilsConfig.get().armorHudScale = scale;
+        DropperUtilsConfig.save();
+    }
+}

@@ -3,7 +3,6 @@ package name.dropperutils.client.hudeditor;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.Minecraft;
 import name.dropperutils.client.hud.ArmorHudElement;
-import name.dropperutils.client.hud.TotemCounterHudElement;
 
 
 public class HudSettingsPanel {
@@ -13,7 +12,7 @@ public class HudSettingsPanel {
     private static boolean draggingSlider = false;
 
     private static final int PANEL_WIDTH = 180;
-    private static final int PANEL_HEIGHT = 160;
+    private static final int PANEL_HEIGHT = 200;
 
     private static final int PANEL_BG = 0xDD101010;
     private static final int HEADER_BG = 0xFF181818;
@@ -229,41 +228,45 @@ public class HudSettingsPanel {
         }
 
 
-        if (selected instanceof TotemCounterHudElement totem) {
+        int sizeLabelY;
+        int sliderY;
 
-            graphics.drawString(
-                    mc.font,
-                    "Size: " + String.format("%.1fx", totem.getScale()),
-                    x + 10,
-                    y + 55,
-                    0xFFFFFFFF
-            );
-
-
-            int sliderX = x + 10;
-            int sliderY = y + 80;
-
-            graphics.fill(
-                    sliderX,
-                    sliderY,
-                    sliderX + 120,
-                    sliderY + 5,
-                    0xFF555555
-            );
-
-
-            int knobX = sliderX +
-                    (int)((totem.getScale() - 0.5f) / 1.5f * 120);
-
-
-            graphics.fill(
-                    knobX - 3,
-                    sliderY - 3,
-                    knobX + 3,
-                    sliderY + 8,
-                    0xFFFFFFFF
-            );
+        if (selected instanceof ArmorHudElement) {
+            sizeLabelY = y + 105;
+            sliderY = y + 125;
+        } else {
+            sizeLabelY = y + 55;
+            sliderY = y + 80;
         }
+
+        graphics.drawString(
+                mc.font,
+                "Size: " + String.format("%.1fx", selected.getScale()),
+                x + 10,
+                sizeLabelY,
+                TEXT
+        );
+
+        int sliderX = x + 10;
+
+        graphics.fill(
+                sliderX,
+                sliderY,
+                sliderX + 120,
+                sliderY + 5,
+                0xFF555555
+        );
+
+        int knobX = sliderX +
+                (int) ((selected.getScale() - 0.25f) / 2.75f * 120);
+
+        graphics.fill(
+                knobX - 3,
+                sliderY - 3,
+                knobX + 3,
+                sliderY + 8,
+                TEXT
+        );
 
         drawButton(
                 graphics,
@@ -330,30 +333,29 @@ public class HudSettingsPanel {
             }
         }
 
-        if (selected instanceof TotemCounterHudElement totem) {
+        int sliderX = x + 10;
 
-            int sliderX = x + 10;
-            int sliderY = y + 80;
+        int sliderY;
 
+        if (selected instanceof ArmorHudElement) {
+            sliderY = y + 125;
+        } else {
+            sliderY = y + 80;
+        }
 
-            if (mouseX >= sliderX &&
-                    mouseX <= sliderX + 120 &&
-                    mouseY >= sliderY - 5 &&
-                    mouseY <= sliderY + 10) {
+        if (mouseX >= sliderX &&
+                mouseX <= sliderX + 120 &&
+                mouseY >= sliderY - 5 &&
+                mouseY <= sliderY + 10) {
 
+            draggingSlider = true;
 
-                draggingSlider = true;
+            updateSizeSlider(
+                    mouseX,
+                    sliderX
+            );
 
-
-                updateTotemSlider(
-                        totem,
-                        mouseX,
-                        sliderX
-                );
-
-
-                return true;
-            }
+            return true;
         }
 
 
@@ -376,48 +378,34 @@ public class HudSettingsPanel {
 
     public static boolean mouseDragged(double mouseX, double mouseY) {
 
-        if (!draggingSlider) {
+        if (!draggingSlider || selected == null) {
             return false;
         }
 
+        int sliderX = getPanelX() + 10;
 
-        if (selected instanceof TotemCounterHudElement totem) {
+        updateSizeSlider(
+                mouseX,
+                sliderX
+        );
 
-            int sliderX = getPanelX() + 10;
-
-
-            updateTotemSlider(
-                    totem,
-                    mouseX,
-                    sliderX
-            );
-
-            return true;
-        }
-
-
-        return false;
+        return true;
     }
 
-    private static void updateTotemSlider(
-            TotemCounterHudElement totem,
+    private static void updateSizeSlider(
             double mouseX,
             int sliderX
     ) {
 
         float percent =
-                (float)((mouseX - sliderX) / 120.0);
-
+                (float) ((mouseX - sliderX) / 120.0);
 
         percent = Math.max(0, Math.min(1, percent));
 
-
         float value =
-                0.5f + percent * 1.5f;
+                0.25f + percent * 2.75f;
 
-
-        totem.setScale(value);
-
+        selected.setScale(value);
     }
 
     private static void drawButton(

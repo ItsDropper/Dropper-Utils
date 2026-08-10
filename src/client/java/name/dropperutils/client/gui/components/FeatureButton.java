@@ -4,7 +4,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class FeatureButton {
 

@@ -22,8 +22,13 @@ public class LightTextureMixin {
             Double instance,
             Operation<Float> original
     ) {
+
         if (FullbrightFeature.INSTANCE.isEnabled()) {
-            return 10.0F;
+
+            float brightness =
+                    FullbrightFeature.getBrightness();
+
+            return brightness / 10.0F;
         }
 
         return original.call(instance);

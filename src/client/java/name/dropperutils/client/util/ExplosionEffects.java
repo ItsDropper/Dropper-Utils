@@ -1,7 +1,6 @@
 package name.dropperutils.client.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleTypes;
 
 import name.dropperutils.client.feature.NoExplosionEffectsFeature;
 
