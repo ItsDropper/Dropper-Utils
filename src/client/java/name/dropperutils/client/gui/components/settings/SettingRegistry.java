@@ -43,21 +43,17 @@ public class SettingRegistry {
         }
 
         if (feature == LowFireFeature.INSTANCE) {
-
             settings.add(
                     new SliderSetting(
                             "Fire Height",
                             0,
                             100,
-                            () -> (double) (
-                                    (1.0f -
-                                            DropperUtilsConfig.get().lowFireHeight)
-                                            * 100.0f
+                            () -> 100.0 - (
+                                    DropperUtilsConfig.get().lowFireHeight * 100.0
                             ),
                             value -> {
                                 DropperUtilsConfig.get().lowFireHeight =
-                                        1.0f -
-                                                (value.floatValue() / 100.0f);
+                                        1.0f - (value.floatValue() / 100.0f);
 
                                 DropperUtilsConfig.save();
                             }

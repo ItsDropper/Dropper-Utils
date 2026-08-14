@@ -31,13 +31,15 @@ public class ScreenEffectRendererMixin {
             return;
         }
 
-        float height =
-                DropperUtilsConfig.get().lowFireHeight;
+        float slider = DropperUtilsConfig.get().lowFireHeight;
+
+        float height = slider * 0.5f;
 
         poseStack.translate(
                 0.0f,
                 -height,
                 0.0f
         );
+
     }
 }
