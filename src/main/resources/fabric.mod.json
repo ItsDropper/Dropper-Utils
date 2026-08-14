@@ -16,13 +16,9 @@
 	"environment": "client",
 
 	"entrypoints": {
-		"main": [
-			"name.dropperutils.DropperUtils"
-		],
 		"client": [
 			"name.dropperutils.client.DropperUtilsClient"
 		]
-
 	},
 
 	"mixins": [
@@ -31,7 +27,7 @@
 
 	"depends": {
 		"fabricloader": ">=0.19.3",
-		"minecraft": "26.1.2",
+		"minecraft": ">=26.1 <26.2",
 		"java": ">=21",
 		"fabric-api": "*"
 	}
