@@ -16,6 +16,12 @@ repositories {
 	mavenCentral()
 }
 
+base {
+	archivesName = "dropperutils"
+}
+tasks.named("jar") {
+	archiveFileName = "dropperutils-${project.mod_version}-${project.minecraft_version}.jar"
+}
 loom {
 	splitEnvironmentSourceSets()
 
@@ -43,14 +49,14 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.release = 21
+	it.options.release = 25
 }
 
 java {
 	withSourcesJar()
 
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 jar {
@@ -58,7 +64,7 @@ jar {
 	inputs.property "projectName", projectName
 
 	from("LICENSE.local") {
-		rename { "${it}_$projectName"}
+		rename { "${it}_$projectName" }
 	}
 }
 
