@@ -54,7 +54,7 @@ DropperUtils includes a fully customizable HUD system:
 
 ## Requirements
 
-* Minecraft 1.21.11
+* Minecraft 1.21.11 or 26.1x
 * Fabric Loader
 * Fabric API
 

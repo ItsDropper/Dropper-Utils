@@ -71,7 +71,7 @@ public class AnchorOptimizer {
 
         scanTimer++;
 
-        if (scanTimer >= 40) {
+        if (scanTimer >= AnchorOptimizerFeature.getScanInterval()) {
             AnchorScanner.scanNearbyAnchors();
             scanTimer = 0;
         }

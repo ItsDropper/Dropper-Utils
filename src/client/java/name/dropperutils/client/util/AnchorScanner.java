@@ -1,5 +1,6 @@
 package name.dropperutils.client.util;
 
+import name.dropperutils.client.feature.AnchorOptimizerFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Blocks;
@@ -20,11 +21,11 @@ public class AnchorScanner {
         BlockPos playerPos = client.player.blockPosition();
         Vec3 look = client.player.getLookAngle();
 
-        for (int x = -3; x <= 5; x++) {
+        int range = AnchorOptimizerFeature.getScanRange();
 
-            for (int y = -2; y <= 3; y++) {
-
-                for (int z = -3; z <= 5; z++) {
+        for (int x = -range; x <= range; x++) {
+            for (int y = -range; y <= range; y++) {
+                for (int z = -range; z <= range; z++) {
 
                     BlockPos pos = playerPos.offset(x, y, z);
 
