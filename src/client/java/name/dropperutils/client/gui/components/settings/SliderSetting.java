@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 public class SliderSetting implements Setting {
 
     private final String name;
+    private final String unit;
     private final double min;
     private final double max;
 
@@ -22,12 +23,14 @@ public class SliderSetting implements Setting {
             String name,
             double min,
             double max,
+            String unit,
             Supplier<Double> getter,
             Consumer<Double> setter
     ) {
         this.name = name;
         this.min = min;
         this.max = max;
+        this.unit = unit;
         this.getter = getter;
         this.setter = setter;
     }
@@ -45,6 +48,7 @@ public class SliderSetting implements Setting {
                 name,
                 min,
                 max,
+                unit,
                 getter,
                 setter
         );
@@ -86,4 +90,3 @@ public class SliderSetting implements Setting {
         return 30;
     }
 }
-

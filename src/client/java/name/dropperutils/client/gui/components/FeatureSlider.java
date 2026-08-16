@@ -14,6 +14,7 @@ public class FeatureSlider {
     private final double max;
     private final Supplier<Double> valueGetter;
     private final Consumer<Double> valueSetter;
+    private final String unit;
 
     public FeatureSlider(
             int x,
@@ -21,10 +22,12 @@ public class FeatureSlider {
             String name,
             double min,
             double max,
+            String unit,
             Supplier<Double> valueGetter,
             Consumer<Double> valueSetter
     ) {
         this.name = name;
+        this.unit = unit;
         this.min = min;
         this.max = max;
         this.valueGetter = valueGetter;
@@ -58,9 +61,15 @@ public class FeatureSlider {
 
     private Component getText(double value) {
 
-        if (max - min == 100) {
+        if (unit.equals("%")) {
             return Component.literal(
                     name + ": " + String.format("%.0f%%", value)
+            );
+        }
+
+        if (!unit.isEmpty()) {
+            return Component.literal(
+                    name + ": " + String.format("%.0f", value) + " " + unit
             );
         }
 

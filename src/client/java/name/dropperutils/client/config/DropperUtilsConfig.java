@@ -44,6 +44,8 @@ public class DropperUtilsConfig {
     public float zoomSpeed = 0.15f;
     public float lowFireHeight = 0.5f;
     public float fullbrightBrightness = 100.0f;
+    public int anchorScanInterval = 40;
+    public int anchorScanRange = 3;
 
     public float armorHudScale = 1.0f;
     public float debugHudScale = 1.0f;

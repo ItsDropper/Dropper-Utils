@@ -1,9 +1,6 @@
 package name.dropperutils.client.gui.components.settings;
 
-import name.dropperutils.client.feature.Feature;
-import name.dropperutils.client.feature.FullbrightFeature;
-import name.dropperutils.client.feature.LowFireFeature;
-import name.dropperutils.client.feature.ZoomFeature;
+import name.dropperutils.client.feature.*;
 import name.dropperutils.client.config.DropperUtilsConfig;
 
 import java.util.ArrayList;
@@ -22,6 +19,7 @@ public class SettingRegistry {
                             "Zoom FOV",
                             1,
                             50,
+                            "",
                             () -> (double) ZoomFeature.getZoomFov(),
                             value -> ZoomFeature.setZoomFov(
                                     value.intValue()
@@ -34,6 +32,7 @@ public class SettingRegistry {
                             "Zoom Speed",
                             0.01,
                             0.5,
+                            "",
                             () -> (double) ZoomFeature.getZoomSpeed(),
                             value -> ZoomFeature.setZoomSpeed(
                                     value.floatValue()
@@ -48,6 +47,7 @@ public class SettingRegistry {
                             "Fire Height",
                             0,
                             100,
+                            "%",
                             () -> 100.0 - (
                                     DropperUtilsConfig.get().lowFireHeight * 100.0
                             ),
@@ -68,6 +68,7 @@ public class SettingRegistry {
                             "Brightness",
                             0,
                             100,
+                            "%",
                             () -> (double) FullbrightFeature.getBrightness(),
                             value -> FullbrightFeature.setBrightness(
                                     value.floatValue()
@@ -75,6 +76,35 @@ public class SettingRegistry {
                     )
             );
         }
+
+        if (feature == AnchorOptimizerFeature.INSTANCE) {
+            settings.add(
+                    new SliderSetting(
+                            "Scan Interval",
+                            5,
+                            100,
+                            "ticks",
+                            () -> (double) AnchorOptimizerFeature.getScanInterval(),
+                            value -> AnchorOptimizerFeature.setScanInterval(
+                                    value.intValue()
+                            )
+                    )
+            );
+
+            settings.add(
+                    new SliderSetting(
+                            "Scan Range",
+                            1,
+                            8,
+                            "blocks",
+                            () -> (double) AnchorOptimizerFeature.getScanRange(),
+                            value -> AnchorOptimizerFeature.setScanRange(
+                                    value.intValue()
+                            )
+                    )
+            );
+        }
+
 
         return settings;
     }

@@ -11,32 +11,34 @@ public class SliderPanel {
             int x
     ) {
 
-        if (screen.getSelectedCategory() != Category.VISUAL) {
-            return;
+        if (screen.getSelectedCategory() == Category.VISUAL) {
+
+            screen.addSlider(
+                    new FeatureSlider(
+                            x,
+                            225,
+                            "Zoom FOV",
+                            1,
+                            50,
+                            "",
+                            () -> (double) ZoomFeature.getZoomFov(),
+                            value -> ZoomFeature.setZoomFov(value.intValue())
+                    ).getSlider()
+            );
+
+            screen.addSlider(
+                    new FeatureSlider(
+                            x,
+                            250,
+                            "Zoom Speed",
+                            0.01,
+                            0.5,
+                            "",
+                            () -> (double) ZoomFeature.getZoomSpeed(),
+                            value -> ZoomFeature.setZoomSpeed(value.floatValue())
+                    ).getSlider()
+            );
         }
 
-        screen.addSlider(
-                new FeatureSlider(
-                        x,
-                        225,
-                        "Zoom FOV",
-                        1,
-                        50,
-                        () -> (double) ZoomFeature.getZoomFov(),
-                        value -> ZoomFeature.setZoomFov(value.intValue())
-                ).getSlider()
-        );
-
-        screen.addSlider(
-                new FeatureSlider(
-                        x,
-                        250,
-                        "Zoom Speed",
-                        0.01,
-                        0.5,
-                        () -> (double) ZoomFeature.getZoomSpeed(),
-                        value -> ZoomFeature.setZoomSpeed(value.floatValue())
-                ).getSlider()
-        );
     }
 }
