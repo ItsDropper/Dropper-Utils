@@ -2,12 +2,13 @@ package name.dropperutils.client.gui;
 
 import name.dropperutils.client.feature.Category;
 import name.dropperutils.client.feature.Feature;
+import name.dropperutils.client.gui.components.FeatureButton;
 import name.dropperutils.client.gui.components.FeaturePanel;
 import name.dropperutils.client.gui.components.GuiInitializer;
 import name.dropperutils.client.gui.components.settings.SettingsPanel;
+
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -15,10 +16,14 @@ import net.minecraft.network.chat.Component;
 public class ClickGuiScreen extends Screen {
 
     private FeaturePanel featurePanel;
+
     private Category selectedCategory = Category.HUD;
 
     private SettingsPanel settingsPanel;
+
     private Feature selectedFeature;
+
+    private Feature hoveredFeature;
 
     public ClickGuiScreen() {
         super(Component.literal("DropperUtils"));
@@ -31,8 +36,8 @@ public class ClickGuiScreen extends Screen {
         rebuildWidgets();
     }
 
-    public void addButton(Button button) {
-        addRenderableWidget(button);
+    public void addButton(AbstractWidget widget) {
+        addRenderableWidget(widget);
     }
 
     public void addSlider(AbstractWidget widget) {
@@ -41,12 +46,12 @@ public class ClickGuiScreen extends Screen {
 
     @Override
     protected void rebuildWidgets() {
+
         clearWidgets();
 
-        GuiInitializer.setup(this);
+        hoveredFeature = null;
 
-        if (selectedFeature != null) {
-        }
+        GuiInitializer.setup(this);
     }
 
     public void openSettings(
@@ -55,10 +60,16 @@ public class ClickGuiScreen extends Screen {
             int buttonY
     ) {
         selectedFeature = feature;
-        settingsPanel.open(feature, buttonX, buttonY);
+
+        settingsPanel.open(
+                feature,
+                buttonX,
+                buttonY
+        );
     }
 
     public void closeSettings() {
+
         selectedFeature = null;
 
         settingsPanel.close();
@@ -86,6 +97,10 @@ public class ClickGuiScreen extends Screen {
             int mouseY,
             float delta
     ) {
+
+        /*
+         * Background
+         */
         graphics.fill(
                 0,
                 0,
@@ -94,19 +109,129 @@ public class ClickGuiScreen extends Screen {
                 0x99000000
         );
 
+        /*
+         * Title
+         */
         graphics.centeredText(
                 font,
                 "DropperUtils",
                 width / 2,
                 40,
-                0xFFFFFF
+                0xFFFFFFFF
         );
 
+        /*
+         * Render the settings panel FIRST.
+         *
+         * This puts the panel background underneath
+         * the actual widget render states.
+         */
         if (settingsPanel != null) {
-            settingsPanel.render(graphics);
+            settingsPanel.render(
+                    graphics,
+                    mouseX,
+                    mouseY
+            );
         }
 
-        super.extractRenderState(graphics, mouseX, mouseY, delta);
+        /*
+         * Render/extract all widgets.
+         */
+        super.extractRenderState(
+                graphics,
+                mouseX,
+                mouseY,
+                delta
+        );
+
+        /*
+         * Find the feature currently under the mouse.
+         */
+        hoveredFeature = null;
+
+        for (GuiEventListener widget : children()) {
+
+            if (widget instanceof FeatureButton featureButton
+                    && featureButton.isMouseOver(mouseX, mouseY)) {
+
+                hoveredFeature = featureButton.getFeature();
+                break;
+            }
+        }
+
+        /*
+         * Feature description.
+         */
+        if (hoveredFeature != null) {
+
+            int padding = 10;
+            int minWidth = 160;
+            int maxWidth = 360;
+
+            String title = hoveredFeature.getName();
+            String description = hoveredFeature.getDescription();
+
+            int titleWidth = font.width(title);
+            int descriptionWidth = font.width(description);
+
+            int panelWidth = Math.max(
+                    minWidth,
+                    Math.min(
+                            maxWidth,
+                            Math.max(titleWidth, descriptionWidth)
+                                    + padding * 2
+                    )
+            );
+
+            int panelHeight = 55;
+
+            int panelX = width / 2 - 75;
+            int panelY = 210;
+
+            /*
+             * Background
+             */
+            graphics.fill(
+                    panelX,
+                    panelY,
+                    panelX + panelWidth,
+                    panelY + panelHeight,
+                    0xEE18181C
+            );
+
+            /*
+             * Accent
+             */
+            graphics.fill(
+                    panelX,
+                    panelY,
+                    panelX + 2,
+                    panelY + panelHeight,
+                    0xFF6677FF
+            );
+
+            /*
+             * Title
+             */
+            graphics.text(
+                    font,
+                    title,
+                    panelX + padding,
+                    panelY + 8,
+                    0xFFFFFFFF
+            );
+
+            /*
+             * Description
+             */
+            graphics.text(
+                    font,
+                    description,
+                    panelX + padding,
+                    panelY + 25,
+                    0xFFAAAAAA
+            );
+        }
     }
 
     @Override
@@ -118,7 +243,9 @@ public class ClickGuiScreen extends Screen {
         return width;
     }
 
-    public void setFeaturePanel(FeaturePanel panel) {
+    public void setFeaturePanel(
+            FeaturePanel panel
+    ) {
         this.featurePanel = panel;
     }
 
@@ -130,7 +257,9 @@ public class ClickGuiScreen extends Screen {
         return selectedCategory;
     }
 
-    public void setSelectedCategory(Category category) {
+    public void setSelectedCategory(
+            Category category
+    ) {
         this.selectedCategory = category;
     }
 
@@ -142,7 +271,34 @@ public class ClickGuiScreen extends Screen {
         rebuildWidgets();
     }
 
-    public void removeWidgetPublic(GuiEventListener widget) {
+    public void removeWidgetPublic(
+            GuiEventListener widget
+    ) {
         removeWidget(widget);
+    }
+
+    public void selectCategory(
+            Category category
+    ) {
+
+        selectedCategory = category;
+
+        /*
+         * Close settings immediately when
+         * changing category.
+         */
+        if (settingsPanel != null
+                && settingsPanel.isOpen()) {
+
+            settingsPanel.closeImmediately();
+        }
+
+        selectedFeature = null;
+
+        rebuildWidgets();
+    }
+
+    public Feature getHoveredFeature() {
+        return hoveredFeature;
     }
 }

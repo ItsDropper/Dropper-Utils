@@ -16,7 +16,7 @@ public class ZoomFeature extends Feature {
     private static float zoomSpeed;
 
     private ZoomFeature() {
-        super("Zoom", Category.VISUAL);
+        super("Zoom", "Zooms the camera in without changing your FOV.", Category.VISUAL);
     }
 
     public void tick(KeyMapping zoomKey) {

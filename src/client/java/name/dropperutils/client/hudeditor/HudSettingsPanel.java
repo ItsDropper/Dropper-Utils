@@ -4,6 +4,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.Minecraft;
 import name.dropperutils.client.hud.ArmorHudElement;
 
+
 public class HudSettingsPanel {
 
     private static HudElement selected;
@@ -13,15 +14,23 @@ public class HudSettingsPanel {
     private static final int PANEL_WIDTH = 180;
     private static final int PANEL_HEIGHT = 200;
 
-    private static final int PANEL_BG = 0xDD101010;
-    private static final int HEADER_BG = 0xFF181818;
-    private static final int BUTTON_BG = 0xFF333333;
-    private static final int BUTTON_HOVER = 0xFF555555;
-    private static final int TEXT = 0xFFFFFFFF;
-    private static final int SUBTEXT = 0xFFAAAAAA;
+    private static final int PANEL_BG = 0xF018181C;
+    private static final int HEADER_BG = 0xFF202024;
 
-    private static final int PANEL_BORDER = 0xFF3A3A3A;
-    private static final int ACCENT = 0xFF4A90E2;
+    private static final int BORDER = 0xFF34343B;
+    private static final int DIVIDER = 0xFF303038;
+
+    private static final int BUTTON_BG = 0xFF25252B;
+    private static final int BUTTON_HOVER = 0xFF303038;
+    private static final int BUTTON_SELECTED = 0xFF556BFF;
+
+    private static final int SLIDER_BG = 0xFF34343B;
+    private static final int SLIDER_FILL = 0xFF6677FF;
+
+    private static final int TEXT = 0xFFFFFFFF;
+    private static final int SUBTEXT = 0xFF9A9AA3;
+    private static final int ACCENT = 0xFF6677FF;
+
 
     private static int getPanelX() {
 
@@ -42,6 +51,7 @@ public class HudSettingsPanel {
         );
     }
 
+
     private static int getPanelY() {
 
         Minecraft mc = Minecraft.getInstance();
@@ -61,20 +71,25 @@ public class HudSettingsPanel {
         );
     }
 
+
     public static void setSelected(HudElement element) {
+
         selected = element;
         open = true;
         draggingSlider = false;
     }
 
     public static void close() {
+
         open = false;
         selected = null;
     }
 
+
     public static void clear() {
         selected = null;
     }
+
 
     public static void render(
             GuiGraphicsExtractor graphics,
@@ -88,179 +103,270 @@ public class HudSettingsPanel {
 
         Minecraft mc = Minecraft.getInstance();
 
-        int panelWidth = PANEL_WIDTH;
-        int panelHeight = PANEL_HEIGHT;
-
         int x = getPanelX();
         int y = getPanelY();
 
+        // ─────────────────────────────────────
+        // Shadow
+        // ─────────────────────────────────────
+
         graphics.fill(
-                x + 4,
-                y,
-                x + panelWidth - 4,
-                y + panelHeight,
-                PANEL_BG
+                x + 3,
+                y + 3,
+                x + PANEL_WIDTH + 4,
+                y + PANEL_HEIGHT + 4,
+                0x55000000
         );
+
+        // ─────────────────────────────────────
+        // Panel
+        // ─────────────────────────────────────
 
         graphics.fill(
                 x,
-                y + 4,
-                x + panelWidth,
-                y + panelHeight - 4,
+                y,
+                x + PANEL_WIDTH,
+                y + PANEL_HEIGHT,
                 PANEL_BG
         );
 
+        // Border
         graphics.fill(
                 x,
                 y,
-                x + panelWidth,
+                x + PANEL_WIDTH,
                 y + 1,
-                PANEL_BORDER
+                BORDER
         );
 
         graphics.fill(
                 x,
-                y + panelHeight - 1,
-                x + panelWidth,
-                y + panelHeight,
-                PANEL_BORDER
+                y + PANEL_HEIGHT - 1,
+                x + PANEL_WIDTH,
+                y + PANEL_HEIGHT,
+                BORDER
         );
 
         graphics.fill(
                 x,
                 y,
                 x + 1,
-                y + panelHeight,
-                PANEL_BORDER
+                y + PANEL_HEIGHT,
+                BORDER
         );
 
         graphics.fill(
-                x + panelWidth - 1,
+                x + PANEL_WIDTH - 1,
                 y,
-                x + panelWidth,
-                y + panelHeight,
-                PANEL_BORDER
+                x + PANEL_WIDTH,
+                y + PANEL_HEIGHT,
+                BORDER
         );
 
+        // ─────────────────────────────────────
+        // Header
+        // ─────────────────────────────────────
+
         graphics.fill(
-                x + 4,
-                y,
-                x + panelWidth - 4,
-                y + 35,
+                x + 1,
+                y + 1,
+                x + PANEL_WIDTH - 1,
+                y + 38,
                 HEADER_BG
         );
 
+        // Accent
         graphics.fill(
-                x,
-                y + 4,
-                x + panelWidth,
-                y + 31,
-                HEADER_BG
-        );
-
-        graphics.fill(
-                x,
-                y + 35,
-                x + panelWidth,
+                x + 1,
                 y + 37,
+                x + PANEL_WIDTH - 1,
+                y + 39,
                 ACCENT
         );
 
         graphics.text(
                 mc.font,
-                "⚙ " + getDisplayName(selected),
-                x + 10,
-                y + 12,
+                getDisplayName(selected),
+                x + 12,
+                y + 13,
                 TEXT
         );
 
-        if (selected instanceof ArmorHudElement) {
+        // Close X
+        boolean closeHovered =
+                mouseX >= x + PANEL_WIDTH - 28 &&
+                        mouseX <= x + PANEL_WIDTH - 8 &&
+                        mouseY >= y + 9 &&
+                        mouseY <= y + 29;
+
+        graphics.fill(
+                x + PANEL_WIDTH - 29,
+                y + 9,
+                x + PANEL_WIDTH - 8,
+                y + 29,
+                closeHovered
+                        ? BUTTON_HOVER
+                        : HEADER_BG
+        );
+
+        graphics.centeredText(
+                mc.font,
+                "×",
+                x + PANEL_WIDTH - 18,
+                y + 12,
+                closeHovered
+                        ? TEXT
+                        : SUBTEXT
+        );
+
+        // ─────────────────────────────────────
+        // Content
+        // ─────────────────────────────────────
+
+        if (selected instanceof ArmorHudElement armor) {
 
             graphics.text(
                     mc.font,
-                    "Layout",
-                    x + 10,
-                    y + 55,
+                    "LAYOUT",
+                    x + 12,
+                    y + 56,
                     SUBTEXT
             );
 
-            drawButton(
+            boolean vertical =
+                    !armor.isHorizontal();
+
+            drawOptionButton(
                     graphics,
                     mc,
                     "Vertical",
                     x + 10,
                     y + 70,
-                    75,
-                    22,
+                    77,
+                    24,
                     mouseX,
-                    mouseY
+                    mouseY,
+                    vertical
             );
 
-            drawButton(
+            drawOptionButton(
                     graphics,
                     mc,
                     "Horizontal",
-                    x + 95,
+                    x + 92,
                     y + 70,
-                    75,
-                    22,
+                    78,
+                    24,
                     mouseX,
-                    mouseY
+                    mouseY,
+                    !vertical
             );
         }
 
-        int sizeLabelY;
+        // ─────────────────────────────────────
+        // Size
+        // ─────────────────────────────────────
+
+        int labelY;
+
         int sliderY;
 
         if (selected instanceof ArmorHudElement) {
-            sizeLabelY = y + 105;
-            sliderY = y + 125;
+            labelY = y + 107;
+            sliderY = y + 128;
         } else {
-            sizeLabelY = y + 55;
-            sliderY = y + 80;
+            labelY = y + 58;
+            sliderY = y + 81;
         }
+
+        float scale = selected.getScale();
 
         graphics.text(
                 mc.font,
-                "Size: " + String.format("%.1fx", selected.getScale()),
-                x + 10,
-                sizeLabelY,
+                "SIZE",
+                x + 12,
+                labelY,
+                SUBTEXT
+        );
+
+        graphics.text(
+                mc.font,
+                String.format("%.1fx", scale),
+                x + PANEL_WIDTH - 42,
+                labelY,
                 TEXT
         );
 
-        int sliderX = x + 10;
+        // Slider track
+        int sliderX = x + 12;
+        int sliderWidth = PANEL_WIDTH - 24;
 
         graphics.fill(
                 sliderX,
                 sliderY,
-                sliderX + 120,
-                sliderY + 5,
-                0xFF555555
+                sliderX + sliderWidth,
+                sliderY + 4,
+                SLIDER_BG
         );
 
-        int knobX = sliderX +
-                (int) ((selected.getScale() - 0.25f) / 2.75f * 120);
+        float progress =
+                (scale - 0.25f) / 2.75f;
+
+        progress = Math.max(
+                0.0f,
+                Math.min(1.0f, progress)
+        );
+
+        int filledWidth =
+                (int) (sliderWidth * progress);
 
         graphics.fill(
-                knobX - 3,
-                sliderY - 3,
-                knobX + 3,
+                sliderX,
+                sliderY,
+                sliderX + filledWidth,
+                sliderY + 4,
+                SLIDER_FILL
+        );
+
+        // Slider knob
+        int knobX =
+                sliderX + filledWidth;
+
+        graphics.fill(
+                knobX - 4,
+                sliderY - 4,
+                knobX + 4,
                 sliderY + 8,
                 TEXT
         );
 
+        // ─────────────────────────────────────
+        // Bottom divider
+        // ─────────────────────────────────────
+
+        graphics.fill(
+                x + 12,
+                y + PANEL_HEIGHT - 48,
+                x + PANEL_WIDTH - 12,
+                y + PANEL_HEIGHT - 47,
+                DIVIDER
+        );
+
+        // Close button
         drawButton(
                 graphics,
                 mc,
-                "✕ Close",
-                x + 10,
-                y + panelHeight - 35,
-                80,
+                "Close",
+                x + 12,
+                y + PANEL_HEIGHT - 36,
+                PANEL_WIDTH - 24,
                 24,
                 mouseX,
                 mouseY
         );
     }
+
+
 
     private static String getDisplayName(HudElement element) {
 
@@ -281,6 +387,7 @@ public class HudSettingsPanel {
             return false;
         }
 
+
         int panelWidth = PANEL_WIDTH;
         int panelHeight = PANEL_HEIGHT;
 
@@ -297,6 +404,7 @@ public class HudSettingsPanel {
                 armor.setHorizontal(false);
                 return true;
             }
+
 
             if (mouseX >= x + 95 &&
                     mouseX <= x + 170 &&
@@ -333,6 +441,7 @@ public class HudSettingsPanel {
             return true;
         }
 
+
         if (mouseX >= x + 10 &&
                 mouseX <= x + 90 &&
                 mouseY >= y + panelHeight - 35 &&
@@ -341,6 +450,7 @@ public class HudSettingsPanel {
             close();
             return true;
         }
+
 
         return false;
     }
@@ -399,8 +509,10 @@ public class HudSettingsPanel {
                         mouseY >= y &&
                         mouseY <= y + height;
 
+
         int color = hovered ? BUTTON_HOVER : BUTTON_BG;
 
+// middle parts
         graphics.fill(
                 x + 3,
                 y,
@@ -417,11 +529,68 @@ public class HudSettingsPanel {
                 color
         );
 
+
         graphics.text(
                 mc.font,
                 text,
                 x + 8,
                 y + 6,
+                TEXT
+        );
+    }
+
+    private static void drawOptionButton(
+            GuiGraphicsExtractor graphics,
+            Minecraft mc,
+            String text,
+            int x,
+            int y,
+            int width,
+            int height,
+            int mouseX,
+            int mouseY,
+            boolean selected
+    ) {
+
+        boolean hovered =
+                mouseX >= x &&
+                        mouseX <= x + width &&
+                        mouseY >= y &&
+                        mouseY <= y + height;
+
+        int background;
+
+        if (selected) {
+            background = BUTTON_SELECTED;
+        } else if (hovered) {
+            background = BUTTON_HOVER;
+        } else {
+            background = BUTTON_BG;
+        }
+
+        graphics.fill(
+                x,
+                y,
+                x + width,
+                y + height,
+                background
+        );
+
+        if (selected) {
+            graphics.fill(
+                    x,
+                    y + height - 2,
+                    x + width,
+                    y + height,
+                    0xFF7C8CFF
+            );
+        }
+
+        graphics.centeredText(
+                mc.font,
+                text,
+                x + width / 2,
+                y + 8,
                 TEXT
         );
     }

@@ -8,7 +8,12 @@ public class AnchorOptimizerFeature extends Feature {
             new AnchorOptimizerFeature();
 
     private AnchorOptimizerFeature() {
-        super("Anchor Optimizer", Category.COMBAT);
+        super(
+                "Anchor Optimizer",
+                "Improves visual feedback" +
+                        " and prediction for respawn anchors.",
+                Category.COMBAT
+        );
     }
 
     @Override

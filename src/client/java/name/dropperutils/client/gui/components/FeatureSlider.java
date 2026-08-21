@@ -1,6 +1,5 @@
 package name.dropperutils.client.gui.components;
 
-import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
@@ -8,12 +7,15 @@ import java.util.function.Supplier;
 
 public class FeatureSlider {
 
-    private final AbstractSliderButton slider;
+    private final FeatureSliderWidget slider;
+
     private final String name;
     private final double min;
     private final double max;
+
     private final Supplier<Double> valueGetter;
     private final Consumer<Double> valueSetter;
+
     private final String unit;
 
     public FeatureSlider(
@@ -27,30 +29,54 @@ public class FeatureSlider {
             Consumer<Double> valueSetter
     ) {
         this.name = name;
-        this.unit = unit;
         this.min = min;
         this.max = max;
+        this.unit = unit;
+
         this.valueGetter = valueGetter;
         this.valueSetter = valueSetter;
 
         double current = valueGetter.get();
 
-        this.slider = new AbstractSliderButton(
+        this.slider = new FeatureSliderWidget(
                 x,
                 y,
                 150,
-                20,
-                getText(current),
+                24,
+                name,
                 (current - min) / (max - min)
         ) {
 
             @Override
-            protected void updateMessage() {
-                setMessage(getText(min + this.value * (max - min)));
+            protected String getValueText() {
+
+                double value =
+                        min + this.value * (max - min);
+
+                if (unit.equals("%")) {
+                    return String.format(
+                            "%.0f%%",
+                            value
+                    );
+                }
+
+                if (!unit.isEmpty()) {
+                    return String.format(
+                            "%.0f %s",
+                            value,
+                            unit
+                    );
+                }
+
+                return String.format(
+                        "%.2f",
+                        value
+                );
             }
 
             @Override
             protected void applyValue() {
+
                 double newValue =
                         min + this.value * (max - min);
 
@@ -59,26 +85,7 @@ public class FeatureSlider {
         };
     }
 
-    private Component getText(double value) {
-
-        if (unit.equals("%")) {
-            return Component.literal(
-                    name + ": " + String.format("%.0f%%", value)
-            );
-        }
-
-        if (!unit.isEmpty()) {
-            return Component.literal(
-                    name + ": " + String.format("%.0f", value) + " " + unit
-            );
-        }
-
-        return Component.literal(
-                name + ": " + String.format("%.2f", value)
-        );
-    }
-
-    public AbstractSliderButton getSlider() {
+    public FeatureSliderWidget getSlider() {
         return slider;
     }
 

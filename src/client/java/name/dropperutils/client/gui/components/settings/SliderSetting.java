@@ -42,6 +42,7 @@ public class SliderSetting implements Setting {
             int y
     ) {
 
+
         slider = new FeatureSlider(
                 x,
                 y,

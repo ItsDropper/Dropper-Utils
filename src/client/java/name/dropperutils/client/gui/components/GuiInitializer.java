@@ -1,64 +1,83 @@
 package name.dropperutils.client.gui.components;
 
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.Component;
-
+import name.dropperutils.client.config.DropperUtilsConfig;
 import name.dropperutils.client.feature.Category;
 import name.dropperutils.client.feature.Feature;
 import name.dropperutils.client.feature.FeatureRegistry;
 import name.dropperutils.client.gui.ClickGuiScreen;
-import name.dropperutils.client.config.DropperUtilsConfig;
 
 public class GuiInitializer {
 
     public static void setup(ClickGuiScreen screen) {
 
-        int categoryX = 20;
-        int categoryY = 60;
+        /*
+         * Layout
+         *
+         * Sidebar:
+         * x = 20
+         * width = 130
+         *
+         * Feature area:
+         * x = 180
+         */
+
+        int sidebarX = 20;
+        int sidebarY = 70;
+
+        int featureX = 180;
+        int featureY = 70;
+
+        /*
+         * Categories
+         */
 
         screen.addButton(
-                Button.builder(
-                        Component.literal("HUD"),
-                        b -> {
-                            screen.setSelectedCategory(Category.HUD);
-                            screen.rebuild();
-                        }
-                ).bounds(categoryX, categoryY, 80, 20).build()
+                new CategoryButton(
+                        sidebarX,
+                        sidebarY,
+                        Category.HUD,
+                        () -> screen.selectCategory(Category.HUD),
+                        () -> screen.getSelectedCategory() == Category.HUD
+                )
         );
 
         screen.addButton(
-                Button.builder(
-                        Component.literal("Visual"),
-                        b -> {
-                            screen.setSelectedCategory(Category.VISUAL);
-                            screen.rebuild();
-                        }
-                ).bounds(categoryX, categoryY + 25, 80, 20).build()
+                new CategoryButton(
+                        sidebarX,
+                        sidebarY + 36,
+                        Category.VISUAL,
+                        () -> screen.selectCategory(Category.VISUAL),
+                        () -> screen.getSelectedCategory() == Category.VISUAL
+                )
         );
 
         screen.addButton(
-                Button.builder(
-                        Component.literal("Combat"),
-                        b -> {
-                            screen.setSelectedCategory(Category.COMBAT);
-                            screen.rebuild();
-                        }
-                ).bounds(categoryX, categoryY + 50, 80, 20).build()
+                new CategoryButton(
+                        sidebarX,
+                        sidebarY + 72,
+                        Category.COMBAT,
+                        () -> screen.selectCategory(Category.COMBAT),
+                        () -> screen.getSelectedCategory() == Category.COMBAT
+                )
         );
 
         screen.addButton(
-                Button.builder(
-                        Component.literal("Misc"),
-                        b -> {
-                            screen.setSelectedCategory(Category.MISC);
-                            screen.rebuild();
-                        }
-                ).bounds(categoryX, categoryY + 75, 80, 20).build()
+                new CategoryButton(
+                        sidebarX,
+                        sidebarY + 108,
+                        Category.MISC,
+                        () -> screen.selectCategory(Category.MISC),
+                        () -> screen.getSelectedCategory() == Category.MISC
+                )
         );
+
+        /*
+         * Feature panel
+         */
 
         FeaturePanel panel = new FeaturePanel(
-                screen.getScreenWidth() / 2 - 75,
-                70
+                featureX,
+                featureY
         );
 
         for (Feature feature : FeatureRegistry.FEATURES) {
@@ -67,7 +86,11 @@ public class GuiInitializer {
 
         screen.setFeaturePanel(panel);
 
-        int y = panel.getY();
+        /*
+         * Features
+         */
+
+        int y = featureY;
 
         for (Feature feature : panel.getFeatures()) {
 
@@ -75,12 +98,13 @@ public class GuiInitializer {
                 continue;
             }
 
-            final int featureY = y;
+            final int currentY = y;
 
             FeatureButton featureButton = new FeatureButton(
+                    screen,
                     panel.getX(),
-                    featureY,
-                    feature.getName(),
+                    currentY, // ✅ use the current feature's Y
+                    feature,
                     () -> {
                         feature.toggle();
                         feature.saveConfig();
@@ -89,28 +113,25 @@ public class GuiInitializer {
                     feature::isEnabled
             );
 
-            screen.addButton(featureButton.getButton());
+            screen.addButton(featureButton);
+
+            /*
+             * Settings
+             */
 
             screen.addButton(
-                    Button.builder(
-                                    Component.literal(">"),
-                                    b -> screen.openSettings(
-                                            feature,
-                                            panel.getX() + 175,
-                                            featureY
-                                    )
+                    new SettingsButton(
+                            featureX + 155,
+                            currentY,
+                            () -> screen.openSettings(
+                                    feature,
+                                    featureX + 175,
+                                    currentY
                             )
-                            .bounds(
-                                    panel.getX() + 155,
-                                    featureY,
-                                    20,
-                                    20
-                            )
-                            .build()
+                    )
             );
 
-            y += 25;
+            y += 36;
         }
-
     }
 }

@@ -7,7 +7,11 @@ public class TotemCounterFeature extends Feature {
     public static final TotemCounterFeature INSTANCE = new TotemCounterFeature();
 
     private TotemCounterFeature() {
-        super("Totem Counter", Category.HUD);
+        super(
+                "Totem Counter",
+                "Shows how many totems you have available.",
+                Category.HUD
+        );
     }
 
     @Override
