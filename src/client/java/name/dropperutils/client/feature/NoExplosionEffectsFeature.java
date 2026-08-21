@@ -8,7 +8,11 @@ public class NoExplosionEffectsFeature extends Feature {
             new NoExplosionEffectsFeature();
 
     private NoExplosionEffectsFeature() {
-        super("No Explosion Effects", Category.VISUAL);
+        super(
+                "No CPVP Effects",
+                "Removes visual explosion- and end crystal effects.",
+                Category.VISUAL
+        );
     }
 
 

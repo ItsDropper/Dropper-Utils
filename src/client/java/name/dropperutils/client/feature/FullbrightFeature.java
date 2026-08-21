@@ -8,7 +8,11 @@ public class FullbrightFeature extends Feature {
             new FullbrightFeature();
 
     private FullbrightFeature() {
-        super("Fullbright", Category.VISUAL);
+        super(
+                "Fullbright",
+                "Makes dark areas fully visible.",
+                Category.VISUAL
+        );
     }
 
     @Override

@@ -9,7 +9,7 @@ public class HudEditorFeature extends Feature {
 
 
     private HudEditorFeature() {
-        super("HUD Editor", Category.MISC);
+        super("HUD Editor", "Test", Category.MISC);
     }
 
 

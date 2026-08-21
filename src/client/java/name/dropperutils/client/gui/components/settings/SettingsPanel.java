@@ -2,7 +2,9 @@ package name.dropperutils.client.gui.components.settings;
 
 import name.dropperutils.client.feature.Feature;
 import name.dropperutils.client.gui.ClickGuiScreen;
+import name.dropperutils.client.gui.components.CloseButton;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -21,12 +23,14 @@ public class SettingsPanel {
     private float animation = 0.0f;
     private boolean closing = false;
 
+    private static final float ANIMATION_SPEED = 0.18f;
+
     private int startX;
     private int startY;
 
-    private Button closeButton;
+    private CloseButton closeButton;
 
-    private final List<Button> buttons = new ArrayList<>();
+    private final List<AbstractWidget> buttons = new ArrayList<>();
     private List<Setting> settings = new ArrayList<>();
 
     public SettingsPanel(ClickGuiScreen screen) {
@@ -45,6 +49,7 @@ public class SettingsPanel {
         this.closing = false;
 
         settings = SettingRegistry.getSettings(feature);
+
 
         createWidgets();
     }
@@ -66,22 +71,20 @@ public class SettingsPanel {
         int x = getX();
         int y = 70;
 
-        closeButton = Button.builder(
-                Component.literal("X"),
-                button -> close()
-        ).bounds(
-                x + width - 30,
-                y + 10,
-                20,
-                20
-        ).build();
+        closeButton = new CloseButton(
+                x + width - 28,
+                y + 8,
+                this::close
+        );
 
         screen.addButton(closeButton);
         buttons.add(closeButton);
 
         int settingY = y + 55;
 
+
         for (Setting setting : settings) {
+
 
             setting.addWidgets(
                     screen,
@@ -95,7 +98,7 @@ public class SettingsPanel {
 
     public void clearWidgets() {
 
-        for (Button button : buttons) {
+        for (AbstractWidget button : buttons) {
             screen.removeWidgetPublic(button);
         }
 
@@ -116,10 +119,9 @@ public class SettingsPanel {
 
         if (closing) {
 
-            animation -= 0.15f;
+            animation -= ANIMATION_SPEED;
 
             if (animation <= 0.0f) {
-
                 animation = 0.0f;
 
                 clearWidgets();
@@ -132,7 +134,7 @@ public class SettingsPanel {
 
         } else {
 
-            animation += (1.0f - animation) * 0.25f;
+            animation += (1.0f - animation) * 0.22f;
 
             if (animation > 0.999f) {
                 animation = 1.0f;
@@ -144,9 +146,13 @@ public class SettingsPanel {
 
     private int getX() {
 
+        float eased = easeOutCubic(animation);
+
+        int targetX = startX + 25;
+
         return (int) (
                 startX +
-                        (screen.width - startX - width) * animation
+                        (targetX - startX) * eased
         );
     }
 
@@ -156,14 +162,13 @@ public class SettingsPanel {
         int y = 70;
 
         if (closeButton != null) {
-            closeButton.setX(x + width - 30);
-            closeButton.setY(y + 10);
+            closeButton.setX(x + width - 28);
+            closeButton.setY(y + 8);
         }
 
         int settingY = y + 55;
 
         for (Setting setting : settings) {
-
             setting.updateWidgets(
                     x + 20,
                     settingY
@@ -173,15 +178,23 @@ public class SettingsPanel {
         }
     }
 
-    public void render(GuiGraphics graphics) {
+    public void render(
+            GuiGraphics graphics,
+            int mouseX,
+            int mouseY
+    ) {
 
         if (feature == null) {
             return;
         }
 
+
         int x = getX();
         int y = 70;
 
+        // Connection from the feature's settings button
+
+        // Soft shadow
         graphics.fill(
                 x - 4,
                 y - 4,
@@ -190,30 +203,34 @@ public class SettingsPanel {
                 0x44000000
         );
 
+        // Outer border
         graphics.fill(
                 x - 1,
                 y - 1,
                 x + width + 1,
                 y + height + 1,
-                0xFF444444
+                0xFF44444A
         );
 
+        // Main panel
         graphics.fill(
                 x,
                 y,
                 x + width,
                 y + height,
-                0xEE18181C
+                0xFF18181C
         );
 
+        // Accent line
         graphics.fill(
                 x,
                 y,
                 x + width,
                 y + 2,
-                0xFF7777FF
+                0xFF6677FF
         );
 
+        // Title
         graphics.drawString(
                 screen.getFont(),
                 feature.getName() + " Settings",
@@ -222,6 +239,36 @@ public class SettingsPanel {
                 0xFFFFFFFF
         );
 
+        // Close button
+        int closeX = x + width - 30;
+        int closeY = y + 8;
+
+        boolean hovered =
+                mouseX >= closeX &&
+                        mouseX <= closeX + 20 &&
+                        mouseY >= closeY &&
+                        mouseY <= closeY + 20;
+
+        graphics.fill(
+                closeX,
+                closeY,
+                closeX + 20,
+                closeY + 20,
+                hovered
+                        ? 0xFF303038
+                        : 0xFF202024
+        );
+
+        graphics.drawCenteredString(
+                screen.getFont(),
+                "×",
+                closeX + 10,
+                closeY + 5,
+                0xFFFFFFFF
+        );
+
+
+        // Divider
         graphics.fill(
                 x + 15,
                 y + 35,
@@ -229,5 +276,18 @@ public class SettingsPanel {
                 y + 36,
                 0xFF38383F
         );
+    }
+
+    public void closeImmediately() {
+        clearWidgets();
+
+        feature = null;
+        closing = false;
+        animation = 0.0f;
+    }
+
+    private float easeOutCubic(float value) {
+        float inverse = 1.0f - value;
+        return 1.0f - inverse * inverse * inverse;
     }
 }

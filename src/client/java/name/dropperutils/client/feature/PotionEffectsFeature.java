@@ -8,7 +8,11 @@ public class PotionEffectsFeature extends Feature {
             new PotionEffectsFeature();
 
     private PotionEffectsFeature() {
-        super("Potion Effects HUD", Category.HUD);
+        super(
+                "Potion Effects",
+                "Displays your active potion effects.",
+                Category.HUD
+        );
     }
 
     @Override

@@ -7,7 +7,11 @@ public class DebugHudFeature extends Feature {
     public static final DebugHudFeature INSTANCE = new DebugHudFeature();
 
     private DebugHudFeature() {
-        super("Debug HUD", Category.MISC);
+        super(
+                "Debug HUD",
+                "Displays useful client and gameplay information.",
+                Category.MISC
+        );
     }
 
 

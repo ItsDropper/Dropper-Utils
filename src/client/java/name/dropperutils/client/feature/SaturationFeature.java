@@ -7,7 +7,11 @@ public class SaturationFeature extends Feature {
     public static final SaturationFeature INSTANCE = new SaturationFeature();
 
     private SaturationFeature() {
-        super("Saturation", Category.HUD);
+        super(
+                "Saturation",
+                "Displays your current saturation level.",
+                Category.HUD
+        );
     }
 
     @Override
