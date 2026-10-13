@@ -55,13 +55,9 @@ public class ZoomFeature extends Feature {
                 + (zoomProgress - previousZoomProgress) * partialTick;
     }
 
-    public static float getZoomMultiplier(float baseFov) {
-        if (baseFov <= 0.0f) {
-            return 1.0f;
-        }
-
-        float targetFov = Math.max(1.0f, zoomFov) * (float) Math.pow(0.65, scrollSteps);
-        return Math.max(0.005f, Math.min(1.0f, targetFov / baseFov));
+    public static float getZoomMultiplier() {
+        return (Math.max(1, Math.min(zoomFov, 70)) / 70.0f)
+                * (float) Math.pow(0.65, scrollSteps);
     }
 
     public static int getZoomFov() {
