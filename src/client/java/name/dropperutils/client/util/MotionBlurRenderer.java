@@ -61,7 +61,7 @@ public final class MotionBlurRenderer {
         Minecraft mc = Minecraft.getInstance();
         DropperUtilsConfig config = DropperUtilsConfig.get();
         if (failed || !config.motionBlur || mc.player == null || mc.screen != null
-                || mc.getWindow().getScreenWidth() <= 0 || mc.getWindow().getScreenHeight() <= 0) {
+                || mc.getWindow().getWidth() <= 0 || mc.getWindow().getHeight() <= 0) {
             reset();
             return;
         }
@@ -85,7 +85,7 @@ public final class MotionBlurRenderer {
             return;
         }
 
-        int w = mc.getWindow().getScreenWidth(), h = mc.getWindow().getScreenHeight();
+        int w = mc.getWindow().getWidth(), h = mc.getWindow().getHeight();
         VIEWPORT_BUFFER.clear();
         GL11.glGetIntegerv(GL11.GL_VIEWPORT, VIEWPORT_BUFFER);
         int vx=VIEWPORT_BUFFER.get(0), vy=VIEWPORT_BUFFER.get(1), vw=VIEWPORT_BUFFER.get(2), vh=VIEWPORT_BUFFER.get(3);
@@ -114,9 +114,12 @@ public final class MotionBlurRenderer {
                 return;
             }
 
-            float mx=clamp(-dyaw/360.0f*1.6f,-0.04f,0.04f);
-            float my=clamp(dpitch/180.0f*1.6f,-0.04f,0.04f);
-            float strength=clamp(config.motionBlurStrength,0.0f,0.85f)*clamp(movement/1.5f,0.0f,1.0f);
+            float mx = clamp(-dyaw / 90.0f, -0.14f, 0.14f);
+            float my = clamp(dpitch / 70.0f, -0.14f, 0.14f);
+            // Scale the blend quickly enough to remain visible at high FPS,
+            // while keeping the displacement proportional to actual camera rotation.
+            float strength = clamp(config.motionBlurStrength, 0.0f, 0.9f)
+                    * clamp(movement / 0.65f, 0.0f, 1.0f);
 
             GL11.glViewport(0,0,w,h);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
