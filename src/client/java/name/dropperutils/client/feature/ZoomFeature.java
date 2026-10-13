@@ -35,12 +35,18 @@ public class ZoomFeature extends Feature {
             return;
         }
 
-        // Positive wheel movement zooms in; scrolling down backs out to the base zoom.
-        scrollSteps = Math.max(0, Math.min(20, scrollSteps + (amount > 0.0 ? 1 : -1)));
+        // Each wheel notch multiplies the target FOV by 0.65, for substantially stronger zoom.
+        int direction = amount > 0.0 ? 1 : -1;
+        scrollSteps = Math.max(0, Math.min(30, scrollSteps + direction));
     }
 
-    public static float getZoomMultiplier() {
-        return (zoomFov / 70.0f) * (float) Math.pow(0.8, scrollSteps);
+    public static float getZoomMultiplier(float baseFov) {
+        if (baseFov <= 0.0f) {
+            return 1.0f;
+        }
+
+        float targetFov = Math.max(1.0f, zoomFov) * (float) Math.pow(0.65, scrollSteps);
+        return Math.max(0.005f, Math.min(1.0f, targetFov / baseFov));
     }
 
     public static int getZoomFov() {
