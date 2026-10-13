@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_21",
   "client": [
     "GameRendererMixin",
+    "MotionBlurMixin",
     "ZoomScrollMixin",
     "GuiMixin",
     "ParticleEngineMixin",
