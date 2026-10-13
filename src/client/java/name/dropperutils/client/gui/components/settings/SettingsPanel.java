@@ -125,7 +125,7 @@ public class SettingsPanel {
         int contentHeight = 0;
         for (Setting setting : settings) contentHeight += setting.getHeight();
         int viewportHeight = bottom - top;
-        int maxScroll = Math.max(0, contentHeight - viewportHeight);
+        int maxScroll = Math.max(0, contentHeight - 6 - viewportHeight);
         int next = Math.max(0, Math.min(maxScroll, scrollOffset - (int) Math.signum(scrollY) * 18));
         if (next == scrollOffset) return true;
         scrollOffset = next;
@@ -294,7 +294,7 @@ public class SettingsPanel {
         int contentHeight = 0;
         for (Setting setting : settings) contentHeight += setting.getHeight();
         int viewportHeight = height - CONTENT_TOP - CONTENT_BOTTOM_PADDING;
-        if (contentHeight > viewportHeight) {
+        if (contentHeight - 6 > viewportHeight) {
             graphics.text(screen.getFont(), "Scroll for more", x + 15, y + height - 17, 0xFFAAAAAA);
         }
 
