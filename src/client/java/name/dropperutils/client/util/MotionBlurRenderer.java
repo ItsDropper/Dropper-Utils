@@ -16,7 +16,7 @@ import java.nio.IntBuffer;
 public final class MotionBlurRenderer {
     private static int program, vao, vbo, currentTexture, widthCache, heightCache;
     private static boolean failed, rotationValid;
-    private static float previousYaw, previousPitch;
+    private static float previousYaw, previousPitch, accumulatedYaw, accumulatedPitch;
     private static final IntBuffer VIEWPORT_BUFFER = BufferUtils.createIntBuffer(4);
 
     private static final String VERTEX = """
@@ -55,6 +55,8 @@ public final class MotionBlurRenderer {
     public static void reset() {
 
         rotationValid = false;
+        accumulatedYaw = 0.0f;
+        accumulatedPitch = 0.0f;
     }
 
     public static void render() {
@@ -78,12 +80,15 @@ public final class MotionBlurRenderer {
         float dyaw = wrap(yaw - previousYaw), dpitch = pitch - previousPitch;
         previousYaw = yaw;
         previousPitch = pitch;
-        float sensitivity = clamp(config.motionBlurSensitivity, 0.25f, 2.0f);
-        float movement = (Math.abs(dyaw) + Math.abs(dpitch)) * sensitivity;
-        if (movement < 0.015f) {
 
-            return;
-        }
+        // Exponential accumulation approximates a short exposure window.
+        // It keeps blur visible at high FPS without retaining old frames.
+        accumulatedYaw = accumulatedYaw * 0.72f + dyaw;
+        accumulatedPitch = accumulatedPitch * 0.72f + dpitch;
+
+        float sensitivity = clamp(config.motionBlurSensitivity, 0.25f, 2.0f);
+        float movement = (Math.abs(accumulatedYaw) + Math.abs(accumulatedPitch)) * sensitivity;
+        if (movement < 0.015f) return;
 
         int w = mc.getWindow().getWidth(), h = mc.getWindow().getHeight();
         VIEWPORT_BUFFER.clear();
@@ -105,8 +110,8 @@ public final class MotionBlurRenderer {
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D,currentTexture);
             GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D,0,0,0,0,0,w,h);
-            float mx = clamp(-dyaw / 90.0f, -0.14f, 0.14f);
-            float my = clamp(dpitch / 70.0f, -0.14f, 0.14f);
+            float mx = clamp(-accumulatedYaw / 90.0f, -0.10f, 0.10f);
+            float my = clamp(accumulatedPitch / 70.0f, -0.10f, 0.10f);
             // Scale the blend quickly enough to remain visible at high FPS,
             // while keeping the displacement proportional to actual camera rotation.
             float strength = clamp(config.motionBlurStrength, 0.0f, 0.9f)
