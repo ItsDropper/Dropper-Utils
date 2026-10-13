@@ -14,8 +14,8 @@ import java.nio.IntBuffer;
 
 /** Temporal camera-motion blur; rendered after the world so HUD/GUI remain sharp. */
 public final class MotionBlurRenderer {
-    private static int program, vao, vbo, currentTexture, widthCache, heightCache;
-    private static boolean failed, rotationValid;
+    private static int program, vao, vbo, currentTexture, historyTexture, widthCache, heightCache;
+    private static boolean failed, rotationValid, historyValid;
     private static float previousYaw, previousPitch, accumulatedYaw, accumulatedPitch;
     private static final IntBuffer VIEWPORT_BUFFER = BufferUtils.createIntBuffer(4);
 
@@ -29,6 +29,7 @@ public final class MotionBlurRenderer {
     private static final String FRAGMENT = """
             #version 150
             uniform sampler2D CurrentFrame;
+            uniform sampler2D HistoryFrame;
 
             uniform vec2 Motion;
             uniform float Strength;
@@ -37,16 +38,16 @@ public final class MotionBlurRenderer {
             out vec4 color;
             void main() {
                 vec4 current = texture(CurrentFrame, uv);
-                vec4 trail = vec4(0.0);
+                vec3 trail = vec3(0.0);
                 int count = clamp(Samples, 2, 12);
                 for (int i = 0; i < 12; ++i) {
                     if (i >= count) break;
-                    float t = float(i) / float(count - 1);
-                    vec2 p = clamp(uv + Motion * (1.0 - t), vec2(0.001), vec2(0.999));
-                    trail += texture(CurrentFrame, p);
+                    float t = float(i + 1) / float(count);
+                    vec2 p = clamp(uv + Motion * t, vec2(0.001), vec2(0.999));
+                    trail += texture(HistoryFrame, p).rgb;
                 }
                 trail /= float(count);
-                color = vec4(mix(current.rgb, trail.rgb, Strength), current.a);
+                color = vec4(mix(current.rgb, trail, Strength), current.a);
             }
             """;
 
@@ -55,6 +56,7 @@ public final class MotionBlurRenderer {
     public static void reset() {
 
         rotationValid = false;
+        historyValid = false;
         accumulatedYaw = 0.0f;
         accumulatedPitch = 0.0f;
     }
@@ -88,7 +90,7 @@ public final class MotionBlurRenderer {
 
         float sensitivity = clamp(config.motionBlurSensitivity, 0.25f, 2.0f);
         float movement = (Math.abs(accumulatedYaw) + Math.abs(accumulatedPitch)) * sensitivity;
-        if (movement < 0.015f) return;
+
 
         int w = mc.getWindow().getWidth(), h = mc.getWindow().getHeight();
         VIEWPORT_BUFFER.clear();
@@ -114,8 +116,10 @@ public final class MotionBlurRenderer {
             float my = clamp(accumulatedPitch / 70.0f, -0.10f, 0.10f);
             // Scale the blend quickly enough to remain visible at high FPS,
             // while keeping the displacement proportional to actual camera rotation.
-            float strength = clamp(config.motionBlurStrength, 0.0f, 0.9f)
-                    * clamp(movement / 0.65f, 0.0f, 1.0f);
+            float strength = historyValid
+                    ? clamp(config.motionBlurStrength, 0.0f, 0.9f)
+                      * clamp(movement / 0.12f, 0.0f, 1.0f)
+                    : 0.0f;
 
             GL11.glViewport(0,0,w,h);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -125,10 +129,19 @@ public final class MotionBlurRenderer {
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D,currentTexture);
             GL20.glUniform1i(GL20.glGetUniformLocation(program,"CurrentFrame"),0);
+            GL13.glActiveTexture(GL13.GL_TEXTURE1);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,historyTexture);
+            GL20.glUniform1i(GL20.glGetUniformLocation(program,"HistoryFrame"),1);
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
             GL20.glUniform2f(GL20.glGetUniformLocation(program,"Motion"),mx,my);
             GL20.glUniform1f(GL20.glGetUniformLocation(program,"Strength"),strength);
             GL20.glUniform1i(GL20.glGetUniformLocation(program,"Samples"),config.motionBlurSamples);
             GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP,0,4);
+
+            int swap = historyTexture;
+            historyTexture = currentTexture;
+            currentTexture = swap;
+            historyValid = true;
         } catch (Throwable t) {
             failed=true;
             
@@ -166,8 +179,11 @@ public final class MotionBlurRenderer {
             GL20.glVertexAttribPointer(1,2,GL11.GL_FLOAT,false,16,8L);
         }
         if(currentTexture==0) currentTexture=GL11.glGenTextures();
+        if(historyTexture==0) historyTexture=GL11.glGenTextures();
         if(w!=widthCache || h!=heightCache) {
             allocate(currentTexture,w,h);
+            allocate(historyTexture,w,h);
+            historyValid = false;
             widthCache=w; heightCache=h; 
         }
     }
