@@ -30,6 +30,7 @@ public class DropperUtilsConfig {
     public boolean saturation = true;
 
     public boolean zoom = true;
+    public boolean motionBlur = false;
     public boolean smoothZoom = true;
     public boolean anchorOptimizer = false;
     public boolean debugHud = false;
@@ -42,6 +43,9 @@ public class DropperUtilsConfig {
 
     public int zoomFov = 30;
     public float zoomSpeed = 0.15f;
+    public float motionBlurStrength = 0.35f;
+    public int motionBlurSamples = 6;
+    public float motionBlurSensitivity = 1.0f;
     public float lowFireHeight = 0.5f;
     public float fullbrightBrightness = 100.0f;
     public int anchorScanInterval = 40;
