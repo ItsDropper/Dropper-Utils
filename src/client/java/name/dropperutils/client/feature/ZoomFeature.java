@@ -8,6 +8,7 @@ public class ZoomFeature extends Feature {
     public static final ZoomFeature INSTANCE = new ZoomFeature();
 
     private static boolean zooming = false;
+    private static int scrollSteps = 0;
 
     private static float zoomProgress = 0.0f;
     private static float previousZoomProgress = 0.0f;
@@ -16,20 +17,19 @@ public class ZoomFeature extends Feature {
     private static float zoomSpeed;
 
     private ZoomFeature() {
-        super("Zoom", "Zooms the camera in without changing your FOV.", Category.VISUAL);
+        super("Zoom", "Hold the zoom key to zoom the camera. Scroll while held for extra zoom.", Category.VISUAL);
     }
 
     public void tick(KeyMapping zoomKey) {
-        if (!isEnabled()) {
-            zooming = false;
-        } else {
-            zooming = zoomKey.isDown();
+        boolean wasZooming = zooming;
+        zooming = isEnabled() && zoomKey.isDown();
+
+        if (wasZooming && !zooming) {
+            scrollSteps = 0;
         }
 
         previousZoomProgress = zoomProgress;
-
         float target = zooming ? 1.0f : 0.0f;
-
         zoomProgress += (target - zoomProgress) * zoomSpeed;
 
         if (Math.abs(target - zoomProgress) < 0.001f) {
@@ -41,13 +41,21 @@ public class ZoomFeature extends Feature {
         return zooming;
     }
 
+    public static void scrollZoom(double amount) {
+        if (!zooming || amount == 0.0) {
+            return;
+        }
+
+        scrollSteps = Math.max(0, Math.min(20, scrollSteps + (amount > 0.0 ? 1 : -1)));
+    }
+
     public static float getZoomProgress(float partialTick) {
         return previousZoomProgress
                 + (zoomProgress - previousZoomProgress) * partialTick;
     }
 
     public static float getZoomMultiplier() {
-        return zoomFov / 70.0f;
+        return (zoomFov / 70.0f) * (float) Math.pow(0.8, scrollSteps);
     }
 
     public static int getZoomFov() {
@@ -56,7 +64,6 @@ public class ZoomFeature extends Feature {
 
     public static void setZoomFov(int value) {
         zoomFov = Math.max(1, Math.min(value, 70));
-
         DropperUtilsConfig.get().zoomFov = zoomFov;
         DropperUtilsConfig.save();
     }
@@ -67,7 +74,6 @@ public class ZoomFeature extends Feature {
 
     public static void setZoomSpeed(float value) {
         zoomSpeed = Math.max(0.01f, Math.min(value, 1.0f));
-
         DropperUtilsConfig.get().zoomSpeed = zoomSpeed;
         DropperUtilsConfig.save();
     }
@@ -75,7 +81,6 @@ public class ZoomFeature extends Feature {
     @Override
     public void loadConfig() {
         DropperUtilsConfig config = DropperUtilsConfig.get();
-
         zoomFov = config.zoomFov;
         zoomSpeed = config.zoomSpeed;
     }
