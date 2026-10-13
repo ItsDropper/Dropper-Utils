@@ -17,6 +17,8 @@ public interface Setting {
     );
 
     void clearWidgets(ClickGuiScreen screen);
-
     int getHeight();
+
+    default void setVisible(boolean visible) {
+    }
 }
