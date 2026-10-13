@@ -43,7 +43,7 @@ public class DropperUtilsConfig {
 
     public int zoomFov = 30;
     public float zoomSpeed = 0.15f;
-    public float motionBlurStrength = 0.35f;
+    public float motionBlurStrength = 0.60f;
     public int motionBlurSamples = 6;
     public float motionBlurSensitivity = 1.0f;
     public float lowFireHeight = 0.5f;
