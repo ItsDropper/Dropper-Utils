@@ -22,13 +22,12 @@ public class CameraMixin {
         float progress = ZoomFeature.getZoomProgress(partialTick);
 
         if (progress > 0.0F) {
-            float multiplier = ZoomFeature.getZoomMultiplier();
-
-            float smoothMultiplier =
-                    1.0F + (multiplier - 1.0F) * progress;
+            float baseFov = cir.getReturnValue();
+            float multiplier = ZoomFeature.getZoomMultiplier(baseFov);
+            float targetFov = baseFov * multiplier;
 
             cir.setReturnValue(
-                    cir.getReturnValue() * smoothMultiplier
+                    baseFov + (targetFov - baseFov) * progress
             );
         }
     }
