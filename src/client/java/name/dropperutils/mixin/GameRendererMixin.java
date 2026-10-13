@@ -17,7 +17,7 @@ public class GameRendererMixin {
     )
     private float modifyZoomFov(float fov) {
         if (ZoomFeature.isZooming()) {
-            return fov * ZoomFeature.getZoomMultiplier(fov);
+            return fov * ZoomFeature.getZoomMultiplier();
         }
 
         return fov;
