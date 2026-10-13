@@ -1,0 +1,223 @@
+package name.dropperutils.client.util;
+
+import name.dropperutils.client.config.DropperUtilsConfig;
+import net.minecraft.client.Minecraft;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+/** Temporal camera-motion blur; rendered after the world so HUD/GUI remain sharp. */
+public final class MotionBlurRenderer {
+    private static int program, vao, vbo, currentTexture, historyTexture, widthCache, heightCache;
+    private static boolean historyValid, failed, rotationValid;
+    private static float previousYaw, previousPitch;
+
+    private static final String VERTEX = """
+            #version 150
+            in vec2 Position;
+            in vec2 TexCoord;
+            out vec2 uv;
+            void main() { gl_Position = vec4(Position, 0.0, 1.0); uv = TexCoord; }
+            """;
+    private static final String FRAGMENT = """
+            #version 150
+            uniform sampler2D CurrentFrame;
+            uniform sampler2D HistoryFrame;
+            uniform vec2 Motion;
+            uniform float Strength;
+            uniform int Samples;
+            in vec2 uv;
+            out vec4 color;
+            void main() {
+                vec4 current = texture(CurrentFrame, uv);
+                vec4 trail = vec4(0.0);
+                int count = clamp(Samples, 2, 12);
+                for (int i = 0; i < 12; ++i) {
+                    if (i >= count) break;
+                    float t = float(i) / float(count - 1);
+                    vec2 p = clamp(uv + Motion * (1.0 - t), vec2(0.001), vec2(0.999));
+                    trail += texture(HistoryFrame, p);
+                }
+                trail /= float(count);
+                color = vec4(mix(current.rgb, trail.rgb, Strength), current.a);
+            }
+            """;
+
+    private MotionBlurRenderer() {}
+
+    public static void reset() {
+        historyValid = false;
+        rotationValid = false;
+    }
+
+    public static void render() {
+        Minecraft mc = Minecraft.getInstance();
+        DropperUtilsConfig config = DropperUtilsConfig.get();
+        if (failed || !config.motionBlur || mc.player == null || mc.screen != null
+                || mc.getWindow().getWidth() <= 0 || mc.getWindow().getHeight() <= 0) {
+            reset();
+            return;
+        }
+
+        float yaw = mc.player.getYRot(), pitch = mc.player.getXRot();
+        if (!rotationValid) {
+            previousYaw = yaw;
+            previousPitch = pitch;
+            rotationValid = true;
+            historyValid = false;
+            return;
+        }
+
+        float dyaw = wrap(yaw - previousYaw), dpitch = pitch - previousPitch;
+        previousYaw = yaw;
+        previousPitch = pitch;
+        float sensitivity = clamp(config.motionBlurSensitivity, 0.25f, 2.0f);
+        float movement = (Math.abs(dyaw) + Math.abs(dpitch)) * sensitivity;
+        if (movement < 0.015f) {
+            historyValid = false;
+            return;
+        }
+
+        int w = mc.getWindow().getWidth(), h = mc.getWindow().getHeight();
+        IntBuffer vp = BufferUtils.createIntBuffer(4);
+        GL11.glGetInteger(GL11.GL_VIEWPORT, vp);
+        int vx=vp.get(0), vy=vp.get(1), vw=vp.get(2), vh=vp.get(3);
+        int oldProgram=GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
+        int oldVao=GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
+        int oldActive=GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
+        boolean depth=GL11.glIsEnabled(GL11.GL_DEPTH_TEST), blend=GL11.glIsEnabled(GL11.GL_BLEND);
+        GL13.glActiveTexture(GL13.GL_TEXTURE0);
+        int oldTex0=GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+        GL13.glActiveTexture(GL13.GL_TEXTURE1);
+        int oldTex1=GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+
+        try {
+            ensure(w,h);
+            if (failed) return;
+
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,currentTexture);
+            GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D,0,0,0,0,0,w,h);
+
+            if (!historyValid) {
+                GL13.glActiveTexture(GL13.GL_TEXTURE1);
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D,historyTexture);
+                GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D,0,0,0,0,0,w,h);
+                historyValid=true;
+                return;
+            }
+
+            float mx=clamp(-dyaw/360.0f*1.6f,-0.04f,0.04f);
+            float my=clamp(dpitch/180.0f*1.6f,-0.04f,0.04f);
+            float strength=clamp(config.motionBlurStrength,0.0f,0.85f)*clamp(movement/1.5f,0.0f,1.0f);
+
+            GL11.glViewport(0,0,w,h);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_BLEND);
+            GL20.glUseProgram(program);
+            GL30.glBindVertexArray(vao);
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,currentTexture);
+            GL13.glActiveTexture(GL13.GL_TEXTURE1);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,historyTexture);
+            GL20.glUniform1i(GL20.glGetUniformLocation(program,"CurrentFrame"),0);
+            GL20.glUniform1i(GL20.glGetUniformLocation(program,"HistoryFrame"),1);
+            GL20.glUniform2f(GL20.glGetUniformLocation(program,"Motion"),mx,my);
+            GL20.glUniform1f(GL20.glGetUniformLocation(program,"Strength"),strength);
+            GL20.glUniform1i(GL20.glGetUniformLocation(program,"Samples"),config.motionBlurSamples);
+            GL11.glDrawArrays(GL11.GL_TRIANGLE_STRIP,0,4);
+
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,historyTexture);
+            GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D,0,0,0,0,0,w,h);
+        } catch (Throwable t) {
+            failed=true;
+            historyValid=false;
+            System.err.println("[DropperUtils] Motion blur disabled after a rendering error.");
+            t.printStackTrace();
+        } finally {
+            GL20.glUseProgram(oldProgram);
+            GL30.glBindVertexArray(oldVao);
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,oldTex0);
+            GL13.glActiveTexture(GL13.GL_TEXTURE1);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D,oldTex1);
+            GL13.glActiveTexture(oldActive);
+            GL11.glViewport(vx,vy,vw,vh);
+            if(depth) GL11.glEnable(GL11.GL_DEPTH_TEST); else GL11.glDisable(GL11.GL_DEPTH_TEST);
+            if(blend) GL11.glEnable(GL11.GL_BLEND); else GL11.glDisable(GL11.GL_BLEND);
+        }
+    }
+
+    private static void ensure(int w,int h) {
+        if(program==0) {
+            program=link(VERTEX,FRAGMENT);
+            if(program==0) { failed=true; return; }
+            vao=GL30.glGenVertexArrays();
+            vbo=GL15.glGenBuffers();
+            GL30.glBindVertexArray(vao);
+            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER,vbo);
+            float[] vertices={-1,-1,0,0, 1,-1,1,0, -1,1,0,1, 1,1,1,1};
+            FloatBuffer data=BufferUtils.createFloatBuffer(vertices.length);
+            data.put(vertices).flip();
+            GL15.glBufferData(GL15.GL_ARRAY_BUFFER,data,GL15.GL_STATIC_DRAW);
+            GL20.glEnableVertexAttribArray(0);
+            GL20.glVertexAttribPointer(0,2,GL11.GL_FLOAT,false,16,0L);
+            GL20.glEnableVertexAttribArray(1);
+            GL20.glVertexAttribPointer(1,2,GL11.GL_FLOAT,false,16,8L);
+        }
+        if(currentTexture==0) currentTexture=GL11.glGenTextures();
+        if(historyTexture==0) historyTexture=GL11.glGenTextures();
+        if(w!=widthCache || h!=heightCache) {
+            allocate(currentTexture,w,h);
+            allocate(historyTexture,w,h);
+            widthCache=w; heightCache=h; historyValid=false;
+        }
+    }
+
+    private static void allocate(int tex,int w,int h) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D,tex);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_MIN_FILTER,GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_MAG_FILTER,GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_WRAP_S,0x812F);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D,GL11.GL_TEXTURE_WRAP_T,0x812F);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D,0,GL11.GL_RGBA8,w,h,0,GL11.GL_RGBA,GL11.GL_UNSIGNED_BYTE,(java.nio.ByteBuffer)null);
+    }
+
+    private static int link(String vs,String fs) {
+        int v=compile(GL20.GL_VERTEX_SHADER,vs), f=compile(GL20.GL_FRAGMENT_SHADER,fs);
+        if(v==0 || f==0) return 0;
+        int p=GL20.glCreateProgram();
+        GL20.glAttachShader(p,v); GL20.glAttachShader(p,f);
+        GL20.glBindAttribLocation(p,0,"Position"); GL20.glBindAttribLocation(p,1,"TexCoord");
+        GL20.glLinkProgram(p); GL20.glDeleteShader(v); GL20.glDeleteShader(f);
+        if(GL20.glGetProgrami(p,GL20.GL_LINK_STATUS)==GL11.GL_FALSE) {
+            System.err.println("[DropperUtils] Motion blur shader link failed: "+GL20.glGetProgramInfoLog(p));
+            GL20.glDeleteProgram(p); return 0;
+        }
+        return p;
+    }
+
+    private static int compile(int type,String src) {
+        int s=GL20.glCreateShader(type);
+        GL20.glShaderSource(s,src); GL20.glCompileShader(s);
+        if(GL20.glGetShaderi(s,GL20.GL_COMPILE_STATUS)==GL11.GL_FALSE) {
+            System.err.println("[DropperUtils] Motion blur shader compile failed: "+GL20.glGetShaderInfoLog(s));
+            GL20.glDeleteShader(s); return 0;
+        }
+        return s;
+    }
+
+    private static float wrap(float v) {
+        while(v>=180) v-=360;
+        while(v< -180) v+=360;
+        return v;
+    }
+    private static float clamp(float v,float min,float max) { return Math.max(min,Math.min(max,v)); }
+}
