@@ -17,6 +17,7 @@ public final class MotionBlurRenderer {
     private static int program, vao, vbo, currentTexture, historyTexture, widthCache, heightCache;
     private static boolean historyValid, failed, rotationValid;
     private static float previousYaw, previousPitch;
+    private static final IntBuffer VIEWPORT_BUFFER = BufferUtils.createIntBuffer(4);
 
     private static final String VERTEX = """
             #version 150
@@ -60,7 +61,7 @@ public final class MotionBlurRenderer {
         Minecraft mc = Minecraft.getInstance();
         DropperUtilsConfig config = DropperUtilsConfig.get();
         if (failed || !config.motionBlur || mc.player == null || mc.screen != null
-                || mc.getWindow().getWidth() <= 0 || mc.getWindow().getHeight() <= 0) {
+                || mc.getWindow().getScreenWidth() <= 0 || mc.getWindow().getScreenHeight() <= 0) {
             reset();
             return;
         }
@@ -84,10 +85,10 @@ public final class MotionBlurRenderer {
             return;
         }
 
-        int w = mc.getWindow().getWidth(), h = mc.getWindow().getHeight();
-        IntBuffer vp = BufferUtils.createIntBuffer(4);
-        GL11.glGetInteger(GL11.GL_VIEWPORT, vp);
-        int vx=vp.get(0), vy=vp.get(1), vw=vp.get(2), vh=vp.get(3);
+        int w = mc.getWindow().getScreenWidth(), h = mc.getWindow().getScreenHeight();
+        VIEWPORT_BUFFER.clear();
+        GL11.glGetInteger(GL11.GL_VIEWPORT, VIEWPORT_BUFFER);
+        int vx=VIEWPORT_BUFFER.get(0), vy=VIEWPORT_BUFFER.get(1), vw=VIEWPORT_BUFFER.get(2), vh=VIEWPORT_BUFFER.get(3);
         int oldProgram=GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
         int oldVao=GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
         int oldActive=GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
