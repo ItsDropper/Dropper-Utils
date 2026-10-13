@@ -7,6 +7,7 @@ public class FeatureRegistry {
     public static final List<Feature> FEATURES = List.of(
             FullbrightFeature.INSTANCE,
             ZoomFeature.INSTANCE,
+            MotionBlurFeature.INSTANCE,
             TotemCounterFeature.INSTANCE,
             ArmorHudFeature.INSTANCE,
             SaturationFeature.INSTANCE,
