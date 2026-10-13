@@ -32,6 +32,9 @@ public class SettingsPanel {
 
     private final List<AbstractWidget> buttons = new ArrayList<>();
     private List<Setting> settings = new ArrayList<>();
+    private int scrollOffset = 0;
+    private static final int CONTENT_TOP = 55;
+    private static final int CONTENT_BOTTOM_PADDING = 8;
 
     public SettingsPanel(ClickGuiScreen screen) {
         this.screen = screen;
@@ -49,7 +52,7 @@ public class SettingsPanel {
         this.closing = false;
 
         settings = SettingRegistry.getSettings(feature);
-
+        scrollOffset = 0;
 
         createWidgets();
     }
@@ -94,6 +97,7 @@ public class SettingsPanel {
 
             settingY += setting.getHeight();
         }
+        updateWidgets();
     }
 
     public void clearWidgets() {
@@ -109,6 +113,24 @@ public class SettingsPanel {
         }
 
         closeButton = null;
+    }
+
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
+        if (feature == null) return false;
+        int x = getX();
+        int top = 70 + CONTENT_TOP;
+        int bottom = 70 + height - CONTENT_BOTTOM_PADDING;
+        if (mouseX < x || mouseX > x + width || mouseY < top || mouseY > bottom) return false;
+
+        int contentHeight = 0;
+        for (Setting setting : settings) contentHeight += setting.getHeight();
+        int viewportHeight = bottom - top;
+        int maxScroll = Math.max(0, contentHeight - viewportHeight);
+        int next = Math.max(0, Math.min(maxScroll, scrollOffset - (int) Math.signum(scrollY) * 18));
+        if (next == scrollOffset) return true;
+        scrollOffset = next;
+        updateWidgets();
+        return true;
     }
 
     public void tick() {
@@ -166,7 +188,7 @@ public class SettingsPanel {
             closeButton.setY(y + 8);
         }
 
-        int settingY = y + 55;
+        int settingY = y + CONTENT_TOP;
 
         for (Setting setting : settings) {
             setting.updateWidgets(
@@ -267,6 +289,14 @@ public class SettingsPanel {
                 0xFFFFFFFF
         );
 
+
+        // Scroll hint when settings extend beyond the visible area.
+        int contentHeight = 0;
+        for (Setting setting : settings) contentHeight += setting.getHeight();
+        int viewportHeight = height - CONTENT_TOP - CONTENT_BOTTOM_PADDING;
+        if (contentHeight > viewportHeight) {
+            graphics.text(screen.getFont(), "Scroll for more", x + 15, y + height - 17, 0xFFAAAAAA);
+        }
 
         // Divider
         graphics.fill(
