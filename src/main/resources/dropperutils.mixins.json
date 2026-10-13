@@ -9,7 +9,8 @@
     "AnchorInteractionMixin",
     "AnchorBlockUpdateMixin",
     "LightmapRenderStateExtractorMixin",
-    "CameraMixin"
+    "CameraMixin",
+    "ZoomScrollMixin"
   ],
   "injectors": {
     "defaultRequire": 1
