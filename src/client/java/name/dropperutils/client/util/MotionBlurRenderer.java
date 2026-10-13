@@ -87,7 +87,7 @@ public final class MotionBlurRenderer {
 
         int w = mc.getWindow().getScreenWidth(), h = mc.getWindow().getScreenHeight();
         VIEWPORT_BUFFER.clear();
-        GL11.glGetInteger(GL11.GL_VIEWPORT, VIEWPORT_BUFFER);
+        GL11.glGetIntegerv(GL11.GL_VIEWPORT, VIEWPORT_BUFFER);
         int vx=VIEWPORT_BUFFER.get(0), vy=VIEWPORT_BUFFER.get(1), vw=VIEWPORT_BUFFER.get(2), vh=VIEWPORT_BUFFER.get(3);
         int oldProgram=GL11.glGetInteger(GL20.GL_CURRENT_PROGRAM);
         int oldVao=GL11.glGetInteger(GL30.GL_VERTEX_ARRAY_BINDING);
