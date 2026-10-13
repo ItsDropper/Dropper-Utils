@@ -87,6 +87,13 @@ public class SliderSetting implements Setting {
     }
 
     @Override
+    public void setVisible(boolean visible) {
+        if (slider != null) {
+            slider.getSlider().visible = visible;
+        }
+    }
+
+    @Override
     public int getHeight() {
         return 30;
     }
