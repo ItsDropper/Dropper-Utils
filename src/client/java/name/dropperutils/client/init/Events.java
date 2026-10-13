@@ -25,6 +25,10 @@ public class Events {
                 DropperUtilsConfig.get().zoom
         );
 
+        MotionBlurFeature.INSTANCE.setEnabled(
+                DropperUtilsConfig.get().motionBlur
+        );
+
         TotemCounterFeature.INSTANCE.setEnabled(
                 DropperUtilsConfig.get().totemCounter
         );
